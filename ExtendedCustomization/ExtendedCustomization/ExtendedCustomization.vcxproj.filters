@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Features">
+      <UniqueIdentifier>{0d6b0457-c924-4696-93ce-b00468e13f96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ExhaustFX">
+      <UniqueIdentifier>{2379a546-b9dd-456a-8d6d-e2846237eb0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CarData">
+      <UniqueIdentifier>{7ace06dd-9b86-412d-af05-a8c2aecf967f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\HandleSpecialCustomization">
+      <UniqueIdentifier>{6208e9ba-64e5-4953-88e6-6505cf0e2ff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameApi">
+      <UniqueIdentifier>{b2d27f5b-2084-45e1-9bca-f9ccec6968ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Menu">
+      <UniqueIdentifier>{57708a3e-7692-4e9c-a08c-d3185c12f31d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExhaustFX.cpp">
+      <Filter>Features\ExhaustFX</Filter>
+    </ClCompile>
+    <ClCompile Include="CarData.cpp">
+      <Filter>CarData</Filter>
+    </ClCompile>
+    <ClCompile Include="HandleSpecialCustomization.cpp">
+      <Filter>Features\HandleSpecialCustomization</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApi.cpp">
+      <Filter>GameApi</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Features\Menu</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Feature.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExhaustFX.h">
+      <Filter>Features\ExhaustFX</Filter>
+    </ClInclude>
+    <ClInclude Include="CarData.h">
+      <Filter>CarData</Filter>
+    </ClInclude>
+    <ClInclude Include="HandleSpecialCustomization.h">
+      <Filter>Features\HandleSpecialCustomization</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApi.h">
+      <Filter>GameApi</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Features\Menu</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
