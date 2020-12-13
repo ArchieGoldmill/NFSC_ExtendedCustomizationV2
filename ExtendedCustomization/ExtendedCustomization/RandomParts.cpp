@@ -61,7 +61,7 @@ int GetNumCarParts(DBPart::_DBPart part, int* rideInfo, bool allowSculpt, bool c
 
 	while (true)
 	{
-		partPtr = Game::GetCarPart(0x00B76690, 0, *rideInfo, part, 0, partPtr, -1);
+		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, *rideInfo, part, 0, partPtr, -1);
 		if (partPtr)
 		{
 			if (IsPartMissing(part, rideInfo, partPtr))
@@ -103,7 +103,7 @@ int* SetRandomPart(DBPart::_DBPart part, int* rideInfo, bool allowSculpt = false
 	int* partPtr = 0;
 	while (true)
 	{
-		partPtr = Game::GetCarPart(0x00B76690, 0, *rideInfo, part, 0, partPtr, -1);
+		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, *rideInfo, part, 0, partPtr, -1);
 
 		if (IsPartMissing(part, rideInfo, partPtr))
 		{

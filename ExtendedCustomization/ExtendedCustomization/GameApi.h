@@ -16,6 +16,7 @@ namespace Game
 	extern int** PlayerPVehicle;
 	extern int*** PVehicleList;
 	extern int* PVehicleCount;
+	extern int* CarPartDB;
 
 	extern int(__cdecl* StringHash)(const char* str);
 	extern int(__cdecl* StringHash1)(const char*, int hash);
@@ -25,6 +26,7 @@ namespace Game
 	extern int(__thiscall* GetAppliedAttributeIParam1)(void* _this, int hash, int v1);
 	extern char* (__cdecl* GetCarTypeName)(int);
 	extern void* (__cdecl* bOMalloc)(int);
+	extern void* (__cdecl* j_malloc_0)(int);
 	extern int(__thiscall* AddMenuOption)(void* _this, int name, int part, int, int);
 	extern int(__cdecl* StringHashModel)(char* a1, unsigned int a2);
 	extern int(__cdecl* bSNPrintf)(char* buffer, int size, const char* str, ...);

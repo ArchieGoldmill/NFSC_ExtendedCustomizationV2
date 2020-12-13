@@ -94,7 +94,7 @@ namespace Config
 		{
 			auto car = new Config::Car();
 			car->_Name = "240SX";
-			car->Popups = true;
+			car->PopupHeadlights = true;
 			carList.push_back(car);
 		}
 
@@ -102,7 +102,7 @@ namespace Config
 		{
 			auto car = new Config::Car();
 			car->_Name = "RX7";
-			car->Popups = true;
+			car->PopupHeadlights = true;
 			carList.push_back(car);
 		}
 
@@ -110,7 +110,7 @@ namespace Config
 		{
 			auto car = new Config::Car();
 			car->_Name = "MR2";
-			car->Popups = true;
+			car->PopupHeadlights = true;
 			carList.push_back(car);
 		}
 
@@ -118,7 +118,7 @@ namespace Config
 		{
 			auto car = new Config::Car();
 			car->_Name = "CAMARO";
-			car->Popups = true;
+			car->PopupHeadlights = true;
 			carList.push_back(car);
 		}
 
@@ -126,7 +126,7 @@ namespace Config
 		{
 			auto car = new Config::Car();
 			car->_Name = "COROLLA";
-			car->Popups = true;
+			car->PopupHeadlights = true;
 			carList.push_back(car);
 		}
 
@@ -134,7 +134,7 @@ namespace Config
 		{
 			auto car = new Config::Car();
 			car->_Name = "CHARGER69";
-			car->Popups = true;
+			car->PopupHeadlights = true;
 			carList.push_back(car);
 		}
 	}
@@ -186,8 +186,10 @@ namespace Config
 	void InitCar(CIniReader& iniReader, Car* cfg)
 	{
 		InitParts(iniReader, cfg);
-		cfg->ForceLodA = iniReader.ReadInteger("GENERAL", "ForceLodA", 0);
-		cfg->ReplaceBrakelightShader = iniReader.ReadInteger("GENERAL", "ReplaceBrakelightShader", 0);
+		cfg->ForceLodA = iniReader.ReadInteger("GENERAL", "ForceLodA", 0) == 1;
+		cfg->ReplaceHeadlightShader = iniReader.ReadInteger("GENERAL", "ReplaceHeadlightShader", 0) == 1;
+		cfg->ReplaceBrakelightShader = iniReader.ReadInteger("GENERAL", "ReplaceBrakelightShader", 0) == 1;
+		cfg->PopupHeadlights = iniReader.ReadInteger("GENERAL", "PopupHeadlights", 0) == 1;
 	}
 
 	void InitCars()

@@ -19,9 +19,7 @@ void Init()
 	InitMenu();
 	InitForceLodA();
 	InitTextureReplace();
-
 	InitWheelAdjustments();
-
 	FixFrontRearDecals();
 	InitNeon();
 }

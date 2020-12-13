@@ -17,7 +17,7 @@ int* GetRenderInfo()
 
 void AddMainMenuItem(int* _this, int hash, int num)
 {
-	int* textOption = (int*)malloc(0x98);
+	int* textOption = (int*)Game::j_malloc_0(0x98);
 	char a = 1, b = 0;
 	Game::TextOption_ctor(textOption, hash, num, &a, &b);
 	Game::VectorScrollerMenu_AddOption(_this, textOption);

@@ -10,7 +10,7 @@ void FixDecals()
 	char* rear = 0;
 	while (true)
 	{
-		partPtr = Game::GetCarPart(0x00B76690, 0, 0x23, DBPart::FrontDecal, 0, partPtr, -1);
+		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, 0, DBPart::FrontDecal, 0, partPtr, -1);
 		if (!partPtr)
 		{
 			break;
@@ -49,16 +49,9 @@ void FixDecals()
 	}
 }
 
-void Fix()
+void FixDecalsThread()
 {
-	int* ptr = (int*)0x00B76690;
-	while (true)
-	{
-		if (*ptr && (int)ptr != *ptr)
-		{
-			break;
-		}
-	}
+	while (!(*Game::CarPartDB && *Game::CarPartDB != (int)Game::CarPartDB));
 
 	FixDecals();
 	*(Game::CarPartSlotMap + DBPart::FrontDecal) = 0x68;
@@ -68,10 +61,9 @@ void Fix()
 void FixFrontRearDecals()
 {
 	auto config = Config::GetGlobal();
-
 	if (config->FixFrontRearDecals)
 	{
-		std::thread(Fix).detach();
+		std::thread(FixDecalsThread).detach();
 	}
 
 	if (config->AllowStockRimsPaint)

@@ -82,7 +82,7 @@ int __stdcall HeadLightsOnOff(int* renderInfo)
 	int* rideInfo = (int*)(*(renderInfo + 0xFC));
 
 	std::string part = Game::GetCarTypeName(*rideInfo);
-	part.append("_KIT00_HEADLIGHT_OFF");
+	part.append("_KIT00_HEADLIGHT_OFF"); // fix this to to use other kits
 	if (Game::GetTextureInfo(Game::StringHash(part.c_str()), 0, 0))
 	{
 		if (*Game::GameState == 3)
@@ -147,24 +147,35 @@ void __declspec(naked) HeadLightsOnOffCave()
 void __stdcall LightMaterial(int* rideInfo, int emodel)
 {
 	auto carConfig = Config::Get(*rideInfo);
+
 	if (carConfig->ReplaceBrakelightShader)
 	{
-		int* brakelight = NULL;
-		int* headlight = NULL;
-
+		int* material = NULL;
 		if (*Game::GameState != 3)
 		{
-			brakelight = Game::elGetLightMaterial(Game::StringHash("LIGHT_GLOW"), 1);
-			headlight = brakelight;
+			material = Game::elGetLightMaterial(Game::StringHash("LIGHT_GLOW"), 1);
 		}
 		else
 		{
-			brakelight = Game::elGetLightMaterial(Game::StringHash("BRAKELIGHT"), 1);
-			headlight = Game::elGetLightMaterial(Game::StringHash("HEADLIGHTREFLECTOR"), 1);
+			material = Game::elGetLightMaterial(Game::StringHash("BRAKELIGHT"), 1);
 		}
 
-		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("BRAKELIGHT"), (int)brakelight);
-		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("HEADLIGHTREFLECTOR"), (int)headlight);
+		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("BRAKELIGHT"), (int)material);
+	}
+
+	if (carConfig->ReplaceBrakelightShader)
+	{
+		int* material = NULL;
+		if (*Game::GameState != 3)
+		{
+			material = Game::elGetLightMaterial(Game::StringHash("LIGHT_GLOW"), 1);
+		}
+		else
+		{
+			material = Game::elGetLightMaterial(Game::StringHash("HEADLIGHTREFLECTOR"), 1);
+		}
+
+		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("HEADLIGHTREFLECTOR"), (int)material);
 	}
 }
 
@@ -256,7 +267,7 @@ void __declspec(naked) BrakelightOnfCave()
 		cmp eax, 6;
 		pop eax;
 		jne BrakelightOff;
-		cmp [ecx + 0x000030B0], 0;
+		cmp[ecx + 0x000030B0], 0;
 		je BrakelightOff;
 		cmp eax, 0;
 		jne BrakelightOff;

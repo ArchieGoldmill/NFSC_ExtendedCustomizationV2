@@ -32,9 +32,10 @@ namespace Config
 		std::string _Name;
 		std::vector<Part> Parts;
 		bool ForceLodA;
+		bool ReplaceHeadlightShader;
 		bool ReplaceBrakelightShader;
 		bool SunRoof;
-		bool Popups;
+		bool PopupHeadlights;
 
 		Part* GetPart(DBPart::_DBPart dbpart);
 	};

@@ -15,6 +15,7 @@ namespace Game
 	int** PlayerPVehicle = (int**)0x00A9F168;
 	int*** PVehicleList = (int***)0x00A9F15C;
 	int* PVehicleCount = (int*)0x00A9F164;
+	int* CarPartDB = (int*)0x00B76690;
 
 	int(__cdecl* StringHash)(const char*) = (int(__cdecl*)(const char*))0x471050;
 	int(__cdecl* StringHash1)(const char*, int) = (int(__cdecl*)(const char*, int))0x00471080;
@@ -24,6 +25,7 @@ namespace Game
 	int(__thiscall* GetAppliedAttributeIParam1)(void*, int, int) = (int(__thiscall*)(void*, int, int))0x007C27C0;
 	char* (__cdecl* GetCarTypeName)(int) = (char* (__cdecl*)(int))0x007B0290;
 	void* (__cdecl* bOMalloc)(int) = (void* (__cdecl*)(int))0x00477BE0;
+	void* (__cdecl* j_malloc_0)(int) = (void* (__cdecl*)(int))0x006A1560;
 	int(__thiscall* AddMenuOption)(void*, int, int, int, int) = (int(__thiscall*)(void*, int, int, int, int))0x85FE30;
 	int(__cdecl* StringHashModel)(char*, unsigned int) = (int(__cdecl*)(char*, unsigned int))0x471080;
 	int(__cdecl* bSNPrintf)(char*, int, const char*, ...) = (int(__cdecl*)(char*, int, const char*, ...))0x475C30;

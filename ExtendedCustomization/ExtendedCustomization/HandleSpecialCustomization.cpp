@@ -129,7 +129,7 @@ int* GetPartByLodHash(DBPart::_DBPart part, int hash, int* rideInfo)
 
 	while (true)
 	{
-		partPtr = Game::GetCarPart(0x00B76690, 0, *rideInfo, part, 0, partPtr, -1);
+		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, *rideInfo, part, 0, partPtr, -1);
 		if (partPtr)
 		{
 			if (hash == Game::GetModelNameHash(partPtr, 0, 0, 0))
@@ -150,7 +150,7 @@ void HandleHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord)
 {
 	auto carData = Config::Get(*rideInfo);
 
-	if (carData->Popups && *Game::GameState == 3)
+	if (carData->PopupHeadlights && *Game::GameState == 3)
 	{
 		SetHeadlightsOff(_this, rideInfo, FECustomizationRecord);
 		return;
@@ -444,7 +444,7 @@ int __fastcall IsSetHeadlightOn(int* _this, int param)
 	int carId = Game::CarRecordGetType(_this);
 
 	auto carData = Config::Get(carId);
-	if (carData->Popups)
+	if (carData->PopupHeadlights)
 	{
 		return 5;
 	}

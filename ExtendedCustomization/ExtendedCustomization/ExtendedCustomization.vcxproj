@@ -120,6 +120,7 @@ copy "$(TargetDir)*.pdb" "E:\Games\Need for Speed - Carbon\scripts"  /y</Command
       </PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
