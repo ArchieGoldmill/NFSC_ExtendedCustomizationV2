@@ -168,20 +168,35 @@ copy "$(TargetDir)*.pdb" "E:\Games\Need for Speed - Carbon\scripts"  /y</Command
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CarData.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ExhaustFX.cpp" />
+    <ClCompile Include="Fixes.cpp" />
+    <ClCompile Include="ForceLodA.cpp" />
     <ClCompile Include="GameApi.cpp" />
     <ClCompile Include="HandleSpecialCustomization.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Neon.cpp" />
+    <ClCompile Include="RandomParts.cpp" />
+    <ClCompile Include="SpecialCustomization.cpp" />
+    <ClCompile Include="TextureReplace.cpp" />
+    <ClCompile Include="WheelAdjustments.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CarData.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="ExhaustFX.h" />
     <ClInclude Include="Feature.h" />
+    <ClInclude Include="Fixes.h" />
+    <ClInclude Include="ForceLodA.h" />
     <ClInclude Include="GameApi.h" />
     <ClInclude Include="HandleSpecialCustomization.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Neon.h" />
+    <ClInclude Include="Parts.h" />
+    <ClInclude Include="RandomParts.h" />
+    <ClInclude Include="SpecialCustomization.h" />
+    <ClInclude Include="TextureReplace.h" />
+    <ClInclude Include="WheelAdjustments.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,17 +15,32 @@
     <Filter Include="Features\ExhaustFX">
       <UniqueIdentifier>{2379a546-b9dd-456a-8d6d-e2846237eb0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CarData">
-      <UniqueIdentifier>{7ace06dd-9b86-412d-af05-a8c2aecf967f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Features\HandleSpecialCustomization">
-      <UniqueIdentifier>{6208e9ba-64e5-4953-88e6-6505cf0e2ff9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameApi">
       <UniqueIdentifier>{b2d27f5b-2084-45e1-9bca-f9ccec6968ef}</UniqueIdentifier>
     </Filter>
     <Filter Include="Features\Menu">
       <UniqueIdentifier>{57708a3e-7692-4e9c-a08c-d3185c12f31d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\ForceLodA">
+      <UniqueIdentifier>{5ebe3f29-8927-4006-b2cd-b45f2b077802}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\TextureReplace">
+      <UniqueIdentifier>{319eee28-3f13-482f-aca5-d5d86718cc81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Fixes">
+      <UniqueIdentifier>{c07e4bb2-0a1b-45ad-98ce-01b9541861e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\Neon">
+      <UniqueIdentifier>{0fe08d69-3606-4eb9-94bc-a2a46e27cb16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\WheelAdjustments">
+      <UniqueIdentifier>{5ea253f9-4b90-4cb5-ab68-88b20bf9154a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{85fab511-cd68-4a66-9049-101b724d79c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Features\SpecialCustomization">
+      <UniqueIdentifier>{6208e9ba-64e5-4953-88e6-6505cf0e2ff9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -35,17 +50,38 @@
     <ClCompile Include="ExhaustFX.cpp">
       <Filter>Features\ExhaustFX</Filter>
     </ClCompile>
-    <ClCompile Include="CarData.cpp">
-      <Filter>CarData</Filter>
-    </ClCompile>
     <ClCompile Include="HandleSpecialCustomization.cpp">
-      <Filter>Features\HandleSpecialCustomization</Filter>
+      <Filter>Features\SpecialCustomization</Filter>
     </ClCompile>
     <ClCompile Include="GameApi.cpp">
       <Filter>GameApi</Filter>
     </ClCompile>
     <ClCompile Include="Menu.cpp">
       <Filter>Features\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="ForceLodA.cpp">
+      <Filter>Features\ForceLodA</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureReplace.cpp">
+      <Filter>Features\TextureReplace</Filter>
+    </ClCompile>
+    <ClCompile Include="Fixes.cpp">
+      <Filter>Features\Fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="Neon.cpp">
+      <Filter>Features\Neon</Filter>
+    </ClCompile>
+    <ClCompile Include="WheelAdjustments.cpp">
+      <Filter>Features\WheelAdjustments</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecialCustomization.cpp">
+      <Filter>Features\SpecialCustomization</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomParts.cpp">
+      <Filter>Features\SpecialCustomization</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -55,17 +91,41 @@
     <ClInclude Include="ExhaustFX.h">
       <Filter>Features\ExhaustFX</Filter>
     </ClInclude>
-    <ClInclude Include="CarData.h">
-      <Filter>CarData</Filter>
-    </ClInclude>
     <ClInclude Include="HandleSpecialCustomization.h">
-      <Filter>Features\HandleSpecialCustomization</Filter>
+      <Filter>Features\SpecialCustomization</Filter>
     </ClInclude>
     <ClInclude Include="GameApi.h">
       <Filter>GameApi</Filter>
     </ClInclude>
     <ClInclude Include="Menu.h">
       <Filter>Features\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="ForceLodA.h">
+      <Filter>Features\ForceLodA</Filter>
+    </ClInclude>
+    <ClInclude Include="Parts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureReplace.h">
+      <Filter>Features\TextureReplace</Filter>
+    </ClInclude>
+    <ClInclude Include="Fixes.h">
+      <Filter>Features\Fixes</Filter>
+    </ClInclude>
+    <ClInclude Include="Neon.h">
+      <Filter>Features\Neon</Filter>
+    </ClInclude>
+    <ClInclude Include="WheelAdjustments.h">
+      <Filter>Features\WheelAdjustments</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecialCustomization.h">
+      <Filter>Features\SpecialCustomization</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomParts.h">
+      <Filter>Features\SpecialCustomization</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

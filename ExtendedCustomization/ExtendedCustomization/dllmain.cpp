@@ -1,17 +1,29 @@
 #include <windows.h>
 
 #include "ExhaustFX.h"
-#include "HandleSpecialCustomization.h"
+#include "SpecialCustomization.h"
 #include "Menu.h"
-#include "CarData.h"
+#include "ForceLodA.h"
+#include "TextureReplace.h"
+#include "Fixes.h"
+#include "Neon.h"
+#include "WheelAdjustments.h"
+#include "Config.h"
 
 void Init()
 {
-	LoadCarData();
+	Config::Init();
 
 	InitExhaustFX();
-	InitHandleSpecialCustomization();
+	InitSpecialCustomization();
 	InitMenu();
+	InitForceLodA();
+	InitTextureReplace();
+
+	InitWheelAdjustments();
+
+	FixFrontRearDecals();
+	InitNeon();
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)

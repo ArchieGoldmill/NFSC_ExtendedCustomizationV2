@@ -1,0 +1,27 @@
+Brakes v
+Track Width v
+Track Width (fenders, bodykit) v
+Camber v
+Neon v
+License plate v
+Tires v
+Fenders(badging) v
+Sun Roof v
+
+Headlights v 
+Popup headlights v
+Breaklights v
+
+Windows(if not chop top)
+Side mirrors v
+Attachments v
+Decals(add stock) v
+Vinyls(add stock)
+Steeringwheel
+
+Exhaust FX v
+Steer angle v
+Force LOD A v
+
+allow exhaust for rear bumper and widebodies
+lights texture replace

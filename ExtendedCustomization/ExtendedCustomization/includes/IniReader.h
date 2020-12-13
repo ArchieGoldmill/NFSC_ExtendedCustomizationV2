@@ -184,7 +184,7 @@ public:
 		data.load_file(m_szFileName);
 	}
 
-	int ReadInteger(char* szSection, char* szKey, int iDefaultValue)
+	int ReadInteger(const char* szSection, const char* szKey, int iDefaultValue)
 	{
 		try {
 			auto str = data.get(szSection, szKey, std::to_string(iDefaultValue));
@@ -220,7 +220,7 @@ public:
 		}
 	}
 
-	char* ReadString(char* szSection, char* szKey, const char* szDefaultValue)
+	char* ReadString(const char* szSection, const char* szKey, const char* szDefaultValue)
 	{
 		char* szResult = new char[255];
 		try {
@@ -242,7 +242,7 @@ public:
 		return szResult;
 	}
 
-	std::string ReadString(char* szSection, char* szKey, std::string szDefaultValue)
+	std::string ReadString(const char* szSection, const char* szKey, std::string szDefaultValue)
 	{
 		char* str = ReadString(szSection, szKey, szDefaultValue.c_str());
 		std::string* szResult = new std::string(str);
