@@ -17,7 +17,9 @@ namespace Config
 	public:
 		_State State;
 		int Header;
+		int HeaderAS;
 		DBPart::_DBPart DBPart;
+		char* Camera;
 
 		Part()
 		{
@@ -48,6 +50,8 @@ namespace Config
 		bool FixWheelMirror;
 		bool AllowStockRimsPaint;
 		bool FixFrontRearDecals;
+		bool AllVinylsMirrorable;
+		float DefaultFrontSteerAngle;
 
 		// Mods
 		bool TiresMod;
@@ -55,6 +59,7 @@ namespace Config
 		bool LicensePlateMod;
 		bool CamberMod;
 		bool TrackWidthMod;
+		bool TireWidthMod;
 
 		// Random parts
 		bool RandomEnabled;
@@ -73,10 +78,11 @@ namespace Config
 		bool RandomWheels;
 	};
 
-	void Init();
+	bool Init();
 	Car* Get(int carId);
 	Car* GetByHash(int hash);
 	Global* GetGlobal();
-	int GetPartHeader(int carId, DBPart::_DBPart part);
+	int GetPartHeader(int carId, DBPart::_DBPart part, bool isAS = false);
 	_State GetPartState(int carId, DBPart::_DBPart part);
+	char* GetPartCamera(int carId, DBPart::_DBPart dbpart);
 }

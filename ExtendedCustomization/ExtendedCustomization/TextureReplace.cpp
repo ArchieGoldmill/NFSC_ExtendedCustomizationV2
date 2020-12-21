@@ -4,6 +4,13 @@
 
 #pragma region TextureReplace
 
+struct TextureReplaceNode
+{
+	int TextureHash;
+	int ReplaceHash;
+	int TexturePointer;
+};
+
 void __stdcall HandleTextureReplacements(int* texPtr)
 {
 	int* rideInfo = (int*)(*(texPtr + 0xFC));
@@ -13,47 +20,61 @@ void __stdcall HandleTextureReplacements(int* texPtr)
 	{
 		int* attachment15 = Game::GetPart(rideInfo, DBPart::Attachment14);
 		if (attachment15) {
-			int* valPtr = (int*)Game::GetAppliedAttributeIParam((void*)attachment15, Game::StringHash((char*)"TEXTURE_NAME"), 0);
-			if (valPtr) {
-				int texHash = *(valPtr + 1);
-
+			int hash = Game::GetAppliedAttributeIParam1((void*)attachment15, Game::StringHash((char*)"TEXTURE_NAME"), 0);
+			if (hash) {
 				// Tire texture
-				*(texPtr + 0x171) = Game::StringHash((char*)"TIRE_STYLE01");
-				*(texPtr + 0x172) = texHash;
-				*(texPtr + 0x173) = -1;
+				auto tex = (TextureReplaceNode*)(texPtr + 0x171);// BADGING_EU
+				tex->TextureHash = Game::StringHash((char*)"TIRE_STYLE01");
+				tex->ReplaceHash = hash;
+				tex->TexturePointer = -1;
+
+				tex = (TextureReplaceNode*)(texPtr + 0x183);// DRIVER
+				tex->TextureHash = Game::StringHash((char*)"TIRE_STYLE02");
+				tex->ReplaceHash = hash;
+				tex->TexturePointer = -1;
 			}
 
-			int* sPtr = (int*)Game::GetAppliedAttributeIParam((void*)attachment15, Game::StringHash((char*)"TEXTURE_NAME_N"), 0);
-			if (sPtr) {
-				int texHash = *(sPtr + 1);
-
+			hash = Game::GetAppliedAttributeIParam1((void*)attachment15, Game::StringHash((char*)"TEXTURE_NAME_N"), 0);
+			if (hash) {
 				// Bump map
-				*(texPtr + 0x183) = Game::StringHash((char*)"TIRE_STYLE01_N");
-				*(texPtr + 0x184) = texHash;
-				*(texPtr + 0x185) = -1;
+				auto tex = (TextureReplaceNode*)(texPtr + 0x180);// Empty
+				tex->TextureHash = Game::StringHash((char*)"TIRE_STYLE01_N");
+				tex->ReplaceHash = hash;
+				tex->TexturePointer = -1;
+
+				tex = (TextureReplaceNode*)(texPtr + 0x186);// _TIRE
+				tex->TextureHash = Game::StringHash((char*)"TIRE_STYLE02_N");
+				tex->ReplaceHash = hash;
+				tex->TexturePointer = -1;
 			}
 		}
 	}
 
 	if (config->LicensePlateMod)
 	{
+		int hash = 0;
+		auto carType = *Game::CarTypeInfoArray + 0x34 * *rideInfo;
 		int* licensePlatePtr = Game::GetPart(rideInfo, DBPart::LicensePlate);
-		if (licensePlatePtr) {
-			int* valPtr = (int*)Game::GetAppliedAttributeIParam((void*)licensePlatePtr, Game::StringHash((char*)"TEXTURE_NAME"), 0);
-
-			if (valPtr) {
-				int texHash = *(valPtr + 1);
-
-				*(texPtr + 0x177) = Game::StringHash((char*)"LICENSEPLATE");
-				*(texPtr + 0x178) = texHash;
-				*(texPtr + 0x179) = -1;
+		if (carType && *(carType + 0x25) == 1)
+		{
+			if (!licensePlatePtr || (licensePlatePtr && Game::IsStock(licensePlatePtr)))
+			{
+				hash = Game::StringHash("LP_COP");
 			}
 		}
+
+		if (licensePlatePtr && !hash)
+		{
+			hash = Game::GetAppliedAttributeIParam1((void*)licensePlatePtr, Game::StringHash((char*)"TEXTURE_NAME"), 0);
+		}
+
+		if (hash) {
+			auto tex = (TextureReplaceNode*)(texPtr + 0x177);
+			tex->TextureHash = Game::StringHash((char*)"LICENSEPLATE");
+			tex->ReplaceHash = hash;
+			tex->TexturePointer = -1;
+		}
 	}
-
-	int* currentTextures = texPtr + 0xB2E;
-
-
 }
 
 void __declspec(naked) HandleTextureReplacementsCave()
@@ -72,6 +93,37 @@ void __declspec(naked) HandleTextureReplacementsCave()
 
 #pragma region HeadlightsOnOff
 
+bool IsGlareOn(int* rideInfo)
+{
+	return true;
+	int** iterator = *Game::PVehicleList;
+	int* pVehicle = NULL;
+	for (int i = 0; i < *Game::PVehicleCount; i++)
+	{
+		int* pvh = iterator[i];
+		if (pvh)
+		{
+			int* renderInfo = (int*)*(pvh + 0x572);
+			if (renderInfo)
+			{
+				int ri = *(renderInfo + 0xFC);
+				if (ri == (int)rideInfo)
+				{
+					pVehicle = pvh;
+					break;
+				}
+			}
+		}
+	}
+
+	if (pVehicle)
+	{
+		return Game::PVehicle_IsGlareOn(pVehicle, 7);
+	}
+
+	return false;
+}
+
 int __stdcall HeadLightsOnOff(int* renderInfo)
 {
 	if (*Game::ForceHeadlightsOff)
@@ -81,9 +133,7 @@ int __stdcall HeadLightsOnOff(int* renderInfo)
 
 	int* rideInfo = (int*)(*(renderInfo + 0xFC));
 
-	std::string part = Game::GetCarTypeName(*rideInfo);
-	part.append("_KIT00_HEADLIGHT_OFF"); // fix this to to use other kits
-	if (Game::GetTextureInfo(Game::StringHash(part.c_str()), 0, 0))
+	if (Game::GetTextureInfo(*(renderInfo + 0xC20), 0, 0))
 	{
 		if (*Game::GameState == 3)
 		{
@@ -92,26 +142,7 @@ int __stdcall HeadLightsOnOff(int* renderInfo)
 
 		if (*Game::GameState == 6)
 		{
-			int** iterator = *Game::PVehicleList;
-			int* pVehicle = NULL;
-			for (int i = 0; i < *Game::PVehicleCount; i++)
-			{
-				int* pvh = iterator[i];
-				if (pvh)
-				{
-					int ri = *(pvh + 0x5F1);//571
-					if (ri == (int)rideInfo)
-					{
-						pVehicle = pvh;
-						break;
-					}
-				}
-			}
-
-			if (pVehicle)
-			{
-				return !Game::PVehicle_IsGlareOn(pVehicle, 7);
-			}
+			return !IsGlareOn(rideInfo);
 		}
 	}
 
@@ -166,7 +197,7 @@ void __stdcall LightMaterial(int* rideInfo, int emodel)
 	if (carConfig->ReplaceBrakelightShader)
 	{
 		int* material = NULL;
-		if (*Game::GameState != 3)
+		if (*Game::GameState != 3 && IsGlareOn(rideInfo))
 		{
 			material = Game::elGetLightMaterial(Game::StringHash("LIGHT_GLOW"), 1);
 		}
@@ -226,11 +257,19 @@ void __stdcall GetUsedCarTextureInfo(int* texPtr, int* rideInfo)
 		if (hash)
 		{
 			hash = Game::StringHash1("_ONF", hash);
-			SetTextureHash(texPtr, hash);
-			if (Game::GetTextureInfo(hash, 0, 0))
-			{
-				*(texPtr + 0xFE) = hash;
-			}
+		}
+		else
+		{
+			char* carName = Game::GetCarTypeName(*rideInfo);
+			char buf[64];
+			sprintf(buf, "%s_KIT00_BRAKELIGHT_ONF", carName);
+			hash = Game::StringHash(buf);
+		}
+
+		SetTextureHash(texPtr, hash);
+		if (Game::GetTextureInfo(hash, 0, 0))
+		{
+			*(texPtr + 0xFE) = hash;
 		}
 	}
 }

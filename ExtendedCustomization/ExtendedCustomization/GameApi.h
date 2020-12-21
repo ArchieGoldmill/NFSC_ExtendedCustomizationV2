@@ -1,10 +1,32 @@
 #pragma once
 #include "Parts.h"
 
+#define SAVE_REGS __asm\
+{\
+	__asm push ebx\
+	__asm push ecx\
+	__asm push edx\
+	__asm push edi\
+	__asm push esi\
+}\
+
+#define RESTORE_REGS __asm\
+{\
+	__asm pop esi\
+	__asm pop edi\
+	__asm pop edx\
+	__asm pop ecx\
+	__asm pop ebx\
+}\
+
 namespace Game
 {
+	void SetTargetFrontSteerAngle(float);
+
+	extern bool AnimateFrontSteerAngle;
 	extern int* GameState;
 	extern float* FrontSteerAngle;
+	extern float TargetFrontSteerAngle;
 	extern float* nosTrailCount;
 	extern int* CarPartSlotMap;
 	extern int** CarTypeInfoArray;
@@ -17,6 +39,7 @@ namespace Game
 	extern int*** PVehicleList;
 	extern int* PVehicleCount;
 	extern int* CarPartDB;
+	extern float* DeltaTime;
 
 	extern int(__cdecl* StringHash)(const char* str);
 	extern int(__cdecl* StringHash1)(const char*, int hash);
@@ -61,6 +84,5 @@ namespace Game
 	extern void(__thiscall* eModel_ReplaceLightMaterial)(int, int, int);
 	extern int* (__cdecl* elGetLightMaterial)(int, int);
 	extern int* (__cdecl* GetTextureInfo)(int, int, int);
-
-	int __stdcall GetPartValue(int* carPtr, int part);
+	extern bool(__cdecl* IsPaused)();
 }

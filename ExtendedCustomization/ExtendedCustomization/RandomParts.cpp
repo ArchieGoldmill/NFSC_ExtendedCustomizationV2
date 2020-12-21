@@ -139,7 +139,6 @@ void __fastcall SetRandomParts(int* rideInfo, int param, int hash)
 {
 	auto config = Config::GetGlobal();
 	auto carType = *Game::CarTypeInfoArray + 0x34 * *rideInfo;
-	char* str;
 	if (carType && *(carType + 0x25) == 2)
 	{
 		return;
@@ -248,7 +247,7 @@ void __fastcall SetRandomParts(int* rideInfo, int param, int hash)
 		}
 	}
 
-	HandleSpecialCustomization(NULL, 0, rideInfo, NULL);
+	HandleSpecialCustomization(NULL, rideInfo, NULL, true);
 }
 
 void InitRandomParts()

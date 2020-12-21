@@ -144,7 +144,19 @@ namespace Config
 		Part menu;
 		menu.State = (_State)iniReader.ReadInteger(name, "Enabled", -1);
 		menu.Header = Game::StringHash(iniReader.ReadString(name, "Header", ""));
+		menu.HeaderAS = Game::StringHash(iniReader.ReadString(name, "HeaderAS", ""));
+		if (menu.HeaderAS == -1)
+		{
+			menu.HeaderAS = menu.Header;
+		}
+
 		menu.DBPart = part;
+		menu.Camera = iniReader.ReadString(name, "Camera", "");
+		if (strlen(menu.Camera) == 0)
+		{
+			menu.Camera = NULL;
+		}
+
 		cfg->Parts.push_back(menu);
 	}
 
@@ -174,6 +186,7 @@ namespace Config
 		InitPart(iniReader, cfg, "PART_LEFT_BRAKELIGHT", DBPart::LeftBrakelight);
 		InitPart(iniReader, cfg, "PART_DRIVER", DBPart::Driver);
 		InitPart(iniReader, cfg, "PART_STEERING_WHEEL", DBPart::SteeringWheel);
+		InitPart(iniReader, cfg, "PART_DOOR_LEFT", DBPart::LeftDoor);
 
 		for (int i = 0; i < 16; i++)
 		{
@@ -189,7 +202,7 @@ namespace Config
 		cfg->ForceLodA = iniReader.ReadInteger("GENERAL", "ForceLodA", 0) == 1;
 		cfg->ReplaceHeadlightShader = iniReader.ReadInteger("GENERAL", "ReplaceHeadlightShader", 0) == 1;
 		cfg->ReplaceBrakelightShader = iniReader.ReadInteger("GENERAL", "ReplaceBrakelightShader", 0) == 1;
-		cfg->PopupHeadlights = iniReader.ReadInteger("GENERAL", "PopupHeadlights", 0) == 1;
+		cfg->PopupHeadlights = iniReader.ReadInteger("GENERAL", "PopUpHeadLights", 0) == 1;
 	}
 
 	void InitCars()
@@ -228,12 +241,15 @@ namespace Config
 		glc->FixWheelMirror = iniReader.ReadInteger("GENERAL", "FixWheelMirror", 0) == 1;
 		glc->AllowStockRimsPaint = iniReader.ReadInteger("GENERAL", "AllowStockRimsPaint", 0) == 1;
 		glc->FixFrontRearDecals = iniReader.ReadInteger("GENERAL", "FixFrontRearDecals", 0) == 1;
+		glc->AllVinylsMirrorable = iniReader.ReadInteger("GENERAL", "AllVinylsMirrorable ", 0) == 1;
+		*Game::FrontSteerAngle = glc->DefaultFrontSteerAngle = iniReader.ReadInteger("GENERAL", "FrontSteerAngle", 0);
 
 		glc->NeonMod = iniReader.ReadInteger("MODS", "Neon", 0) == 1;
 		glc->TiresMod = iniReader.ReadInteger("MODS", "Neon", 0) == 1;
 		glc->LicensePlateMod = iniReader.ReadInteger("MODS", "LicensePlate", 0) == 1;
 		glc->CamberMod = iniReader.ReadInteger("MODS", "CamberMod", 0) == 1;
 		glc->TrackWidthMod = iniReader.ReadInteger("MODS", "TrackWidthMod", 0) == 1;
+		glc->TireWidthMod = iniReader.ReadInteger("MODS", "TireWidthMod", 0) == 1;
 
 		glc->RandomEnabled = iniReader.ReadInteger("RANDOM_PARTS", "Enabled", 0) == 1;
 		glc->RandomBody = iniReader.ReadInteger("RANDOM_PARTS", "Body", 0) == 1;
@@ -251,11 +267,19 @@ namespace Config
 		glc->RandomBrakes = iniReader.ReadInteger("RANDOM_PARTS", "Brakes", 0) == 1;
 	}
 
-	void Init()
+	bool Init()
 	{
+		CIniReader iniReader("NFSCarbon.WidescreenFix.ini");
+		if (iniReader.ReadInteger("MISC", "CarShadowFix", 0) != 0)
+		{
+			MessageBoxA(NULL, "Please set CarShadowFix to 0 in NFSCarbon.WidescreenFix.ini", "NFSC - Extended Customization", MB_ICONERROR);
+			return false;
+		}
+
 		InitGlobal();
 		InitCars();
 		InitDefaultCars();
+		return true;
 	}
 
 	Part* Car::GetPart(DBPart::_DBPart dbpart)
@@ -271,7 +295,7 @@ namespace Config
 		return NULL;
 	}
 
-	int GetPartHeader(int carId, DBPart::_DBPart dbpart)
+	int GetPartHeader(int carId, DBPart::_DBPart dbpart, bool isAS)
 	{
 		auto carConfig = GetCar(carId);
 		if (carConfig)
@@ -279,9 +303,10 @@ namespace Config
 			auto part = carConfig->GetPart(dbpart);
 			if (part)
 			{
-				if (part->Header != -1)
+				int header = isAS ? part->HeaderAS : part->Header;
+				if (header != -1)
 				{
-					return part->Header;
+					return header;
 				}
 			}
 		}
@@ -289,7 +314,7 @@ namespace Config
 		auto part = glc->GetPart(dbpart);
 		if (part)
 		{
-			return part->Header;
+			return isAS ? part->HeaderAS : part->Header;
 		}
 
 		return -1;
@@ -303,7 +328,7 @@ namespace Config
 			auto part = carConfig->GetPart(dbpart);
 			if (part)
 			{
-				if (part->Header != -1)
+				if (part->State != _State::DefaultState)
 				{
 					return part->State;
 				}
@@ -317,5 +342,29 @@ namespace Config
 		}
 
 		return _State::DisabledState;
+	}
+
+	char* GetPartCamera(int carId, DBPart::_DBPart dbpart)
+	{
+		auto carConfig = GetCar(carId);
+		if (carConfig)
+		{
+			auto part = carConfig->GetPart(dbpart);
+			if (part)
+			{
+				if (part->Camera)
+				{
+					return part->Camera;
+				}
+			}
+		}
+
+		auto part = glc->GetPart(dbpart);
+		if (part)
+		{
+			return part->Camera;
+		}
+
+		return NULL;
 	}
 }

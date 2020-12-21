@@ -23,6 +23,10 @@ namespace DBPart
 		Driver = 0x2D,
 		SteeringWheel = 0x2E,
 
+		LeftDoor = 0x52,
+		RightDoor = 0x53,
+		DoorLine = 0x57,
+
 		Attachment0 = 0x38,
 		Attachment12 = 0x44,
 		Attachment13 = 0x45,

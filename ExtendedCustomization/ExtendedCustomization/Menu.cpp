@@ -4,6 +4,13 @@
 #include "Config.h"
 
 int* CurrentCarPtr = (int*)0x00B74320;
+DBPart::_DBPart SpecialtiesMenu[12] = { DBPart::LicensePlate, DBPart::FrontBrake, DBPart::FrontRotor, DBPart::Attachment12,
+										DBPart::Attachment13, DBPart::Attachment14, DBPart::Attachment15, DBPart::FrontDecal,
+										DBPart::RearDecal, DBPart::Driver, DBPart::SteeringWheel, DBPart::GenericVinyls };
+
+DBPart::_DBPart MiscMenu[12] = { DBPart::LeftDoor, DBPart::FrontBrake, DBPart::FrontRotor, DBPart::Attachment12,
+								 DBPart::Attachment13, DBPart::Attachment14, DBPart::Attachment15, DBPart::FrontDecal,
+								 DBPart::RearDecal, DBPart::Driver, DBPart::SteeringWheel, DBPart::GenericVinyls };
 
 int* GetRideInfo()
 {
@@ -25,7 +32,7 @@ void AddMainMenuItem(int* _this, int hash, int num)
 
 void __stdcall AddMainMenuItems(int* _this)
 {
-	*Game::FrontSteerAngle = 0;
+	Game::SetTargetFrontSteerAngle(Config::GetGlobal()->DefaultFrontSteerAngle);
 	int* rideInfo = GetRideInfo();
 
 	for (int i = 0; i < 12; i++)
@@ -37,7 +44,24 @@ void __stdcall AddMainMenuItems(int* _this)
 		}
 	}
 
-	AddMainMenuItem(_this, Game::StringHash("CUST_MAINMENU_SPECIALTIES"), 6);
+	for (int i = 0; i < 12; i++)
+	{
+		if (Config::GetPartState(*rideInfo, SpecialtiesMenu[i]) == Config::EnabledState)
+		{
+			AddMainMenuItem(_this, Game::StringHash("CUST_MAINMENU_SPECIALTIES"), 6);
+			break;
+		}
+	}
+
+	return;
+	for (int i = 0; i < 12; i++)
+	{
+		if (Config::GetPartState(*rideInfo, MiscMenu[i]) == Config::EnabledState)
+		{
+			AddMainMenuItem(_this, Game::StringHash("CUST_MAINMENU_MISC"), 7);
+			break;
+		}
+	}
 }
 
 void __declspec(naked) AddMainMenuItemsCave()
@@ -99,21 +123,18 @@ void AddMenuItem(char* _this, DBPart::_DBPart dbpart, bool isAutosculpt)
 
 	int* rideInfo = GetRideInfo();
 	auto state = Config::GetPartState(*rideInfo, dbpart);
-	if (state == Config::DefaultState)
+	if (dbpart == DBPart::Roof && isAutosculpt)
 	{
-		if (dbpart == DBPart::Roof && isAutosculpt)
+		int* racingClassPtr = Game::GetAttributePointer((void*)0x00BBABB0, 0x247E0956, 0);
+		if (racingClassPtr && *racingClassPtr == 2)
 		{
-			int* racingClassPtr = Game::GetAttributePointer((void*)0x00BBABB0, 0x247E0956, 0);
-			if (racingClassPtr && *racingClassPtr == 2)
-			{
-				state = Config::EnabledState;
-			}
+			state = Config::EnabledState;
 		}
 	}
 
 	if (state == Config::EnabledState)
 	{
-		Game::AddMenuOption(_this, Config::GetPartHeader(*rideInfo, dbpart), dbpart, isAutosculpt, filter);
+		Game::AddMenuOption(_this, Config::GetPartHeader(*rideInfo, dbpart, isAutosculpt), dbpart, isAutosculpt, filter);
 	}
 }
 
@@ -164,19 +185,18 @@ void __stdcall AddMenuItems(char* _this)
 
 		if (lastMenu == 6)
 		{
-			AddMenuItem(_this, DBPart::LicensePlate, isAutosculpt);
-			AddMenuItem(_this, DBPart::FrontBrake, isAutosculpt);
-			AddMenuItem(_this, DBPart::FrontRotor, isAutosculpt);
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 12; i++)
 			{
-				AddMenuItem(_this, (DBPart::_DBPart)(DBPart::Attachment12 + i), isAutosculpt);
+				AddMenuItem(_this, SpecialtiesMenu[i], isAutosculpt);
 			}
+		}
 
-			AddMenuItem(_this, DBPart::FrontDecal, isAutosculpt);
-			AddMenuItem(_this, DBPart::RearDecal, isAutosculpt);
-			AddMenuItem(_this, DBPart::Driver, isAutosculpt);
-			AddMenuItem(_this, DBPart::SteeringWheel, isAutosculpt);
-			AddMenuItem(_this, DBPart::GenericVinyls, isAutosculpt);
+		if (lastMenu == 7)
+		{
+			for (int i = 0; i < 12; i++)
+			{
+				AddMenuItem(_this, MiscMenu[i], isAutosculpt);
+			}
 		}
 	}
 }
@@ -214,150 +234,33 @@ void __fastcall GetCameraScreenName(int* _this, int dummy, char* a2, int a3)
 	{
 		if (*(_this + 0xB8) && *(_this + 0xB1) < 0x00A99C60)
 		{
-			*Game::FrontSteerAngle = 0;
-			auto part = DBPart::Invalid;
-
 			int* partPtr = (int*)*(_this + 0xD);
 			if (partPtr)
 			{
-				part = (DBPart::_DBPart) * (partPtr + 0xC);
-			}
-
-			char* menu = NULL;
-			if (part == DBPart::FrontBumper)
-			{
-				menu = (char*)"FeAutosculptFrontBumper.fng";
-			}
-
-			if (part == DBPart::RearBumper)
-			{
-				menu = (char*)"FeAutosculptRearBumper.fng";
-			}
-
-			if (part == DBPart::Skirt)
-			{
-				menu = (char*)"FeAutosculptSkirt.fng";
-			}
-
-			if (part == DBPart::Exhaust)
-			{
-				menu = (char*)"FeAutosculptExhaust.fng";
-			}
-
-			if (part == DBPart::Hood)
-			{
-				menu = (char*)"FeAutosculptHood.fng";
-			}
-
-			if (part == DBPart::RoofScoop)
-			{
-				menu = (char*)"FeAutosculptRoof.fng";
-			}
-
-			if (part == DBPart::Spoiler)
-			{
-				menu = (char*)"FeAutosculptSpoiler.fng";
-			}
-
-			if (part == DBPart::FrontWheels)
-			{
-				menu = (char*)"FeAutosculptWheel.fng";
-			}
-
-			if (part == DBPart::Roof)
-			{
-				menu = (char*)"FeAutosculptTop.fng";
-			}
-
-			if (part == DBPart::Body)
-			{
-				menu = (char*)"FeAutosculptBodyKit.fng";
-			}
-
-			if (part == DBPart::FrontBadging)
-			{
-				menu = (char*)"FeFrontBadging.fng";
-			}
-
-			if (part == DBPart::RearBadging)
-			{
-				menu = (char*)"FeRearBadging.fng";
-			}
-
-			if (part == DBPart::Interior)
-			{
-				menu = (char*)"FeInterior.fng";
-			}
-
-			if (part == DBPart::LeftMirror)
-			{
-				menu = (char*)"FeLeftMirror.fng";
-			}
-
-			if (part == DBPart::LicensePlate)
-			{
-				menu = (char*)"FeLicensePlate.fng";
-			}
-
-			if (part == DBPart::FrontBrake || part == DBPart::FrontRotor)
-			{
-				menu = (char*)"FeFrontBrake.fng";
-			}
-
-			if (part == DBPart::FrontDecal)
-			{
-				menu = (char*)"FeFrontDecal.fng";
-			}
-
-			if (part == DBPart::RearDecal)
-			{
-				menu = (char*)"FeRearDecal.fng";
-			}
-
-			if ((part >= DBPart::Attachment0 && part <= DBPart::Attachment15) || part == DBPart::GenericVinyls)
-			{
-				menu = (char*)"FeAttachment.fng";
-			}
-
-			auto config = Config::GetGlobal();
-			if (config->TiresMod)
-			{
-				if (part == DBPart::Attachment14)
+				Game::SetTargetFrontSteerAngle(Config::GetGlobal()->DefaultFrontSteerAngle);
+				auto part = (DBPart::_DBPart) * (partPtr + 0xC);
+				auto config = Config::GetGlobal();
+				if (config->TiresMod && part == DBPart::Attachment14)
 				{
-					*Game::FrontSteerAngle = -20.0;
-					menu = (char*)"FeTires.fng";
+					Game::SetTargetFrontSteerAngle(-20.0);
 				}
-			}
 
-			if (config->NeonMod)
-			{
-				if (part == DBPart::Attachment15)
+				if (config->CamberMod && part == DBPart::Attachment12)
 				{
-					menu = (char*)"FeNeon.fng";
+					Game::SetTargetFrontSteerAngle(0);
 				}
-			}
 
-			if (config->CamberMod)
-			{
-				if (part == DBPart::Attachment12)
+				if (config->TrackWidthMod && part == DBPart::Attachment13)
 				{
-					menu = (char*)"FeCamber.fng";
+					Game::SetTargetFrontSteerAngle(0);
 				}
-			}
 
-			if (config->TrackWidthMod)
-			{
-				if (part == DBPart::Attachment13)
+				char* menu = Config::GetPartCamera(*GetRideInfo(), part);
+				if (menu)
 				{
-					menu = (char*)"FeCamber.fng";
+					strcpy_s(a2, a3, menu);
+					return;
 				}
-			}
-
-			if (menu)
-			{
-				strcpy_s(a2, a3, menu);
-
-				return;
 			}
 		}
 	}
@@ -424,7 +327,7 @@ void __declspec(naked) PartWarningCave()
 int __stdcall DisableParts(int header)
 {
 	int* rideInfo = GetRideInfo();
-	if (header == Game::StringHash("CUST_PARTS_EXHAUST"))
+	if (header == Config::GetPartHeader(*rideInfo, DBPart::Exhaust))
 	{
 		if (!HasExhaustMountPoint())
 		{
@@ -475,8 +378,6 @@ void __declspec(naked) DisablePartsCave()
 
 void InitMenu()
 {
-	*Game::FrontSteerAngle = 0;
-
 	injector::MakeJMP(0x0083FBF1, AddMainMenuItemsCave, true);
 	injector::MakeJMP(0x008683C9, OpenCustomMenuCave, true);
 	injector::MakeJMP(0x00866074, AddMenuItemsCave, true);

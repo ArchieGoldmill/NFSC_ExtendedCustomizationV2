@@ -2,8 +2,16 @@
 
 namespace Game
 {
+	bool AnimateFrontSteerAngle = false;
+	void SetTargetFrontSteerAngle(float angle)
+	{
+		TargetFrontSteerAngle = angle;
+		AnimateFrontSteerAngle = true;
+	}
+
 	int* GameState = (int*)0xA99BBC;
 	float* FrontSteerAngle = (float*)0x00A7B668;
+	float TargetFrontSteerAngle = 0;
 	float* nosTrailCount = (float*)0x00A732A8;
 	int* CarPartSlotMap = (int*)0x00A73398;
 	int** CarTypeInfoArray = (int**)0x00B74CCC;
@@ -16,6 +24,7 @@ namespace Game
 	int*** PVehicleList = (int***)0x00A9F15C;
 	int* PVehicleCount = (int*)0x00A9F164;
 	int* CarPartDB = (int*)0x00B76690;
+	float* DeltaTime = (float*)0x00A99A5C;
 
 	int(__cdecl* StringHash)(const char*) = (int(__cdecl*)(const char*))0x471050;
 	int(__cdecl* StringHash1)(const char*, int) = (int(__cdecl*)(const char*, int))0x00471080;
@@ -60,22 +69,5 @@ namespace Game
 	void(__thiscall* eModel_ReplaceLightMaterial)(int, int, int) = (void(__thiscall*)(int, int, int))0x0055C0B0;
 	int* (__cdecl* elGetLightMaterial)(int, int) = (int* (__cdecl*)(int, int))0x007473A0;
 	int* (__cdecl* GetTextureInfo)(int, int, int) = (int* (__cdecl*)(int, int, int))0x0055CFD0;
-
-	int __stdcall GetPartValue(int* carPtr, int part)
-	{
-		int val = 0;
-
-		if (carPtr) {
-			int* partPtr = carPtr + part;
-			if (*partPtr) {
-				int* valPtr = (int*)Game::GetAppliedAttributeIParam((void*)*partPtr, Game::StringHash((char*)"SPINNEROFFSET"), 0);
-
-				if (valPtr) {
-					val = *(valPtr + 1);
-				}
-			}
-		}
-
-		return val;
-	}
+	bool (__cdecl* IsPaused)() = (bool (__cdecl*)())0x004A62E0;
 }

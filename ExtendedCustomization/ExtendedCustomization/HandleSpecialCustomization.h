@@ -1,3 +1,3 @@
 #pragma once
 void InitHandleSpecialCustomization();
-void __fastcall HandleSpecialCustomization(void* _this, int param, int* rideInfo, int* FECustomizationRecord);
+void HandleSpecialCustomization(void* _this, int* rideInfo, int* FECustomizationRecord, bool randomCar = false);

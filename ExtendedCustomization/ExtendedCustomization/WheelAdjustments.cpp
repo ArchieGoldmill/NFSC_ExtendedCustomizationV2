@@ -1,13 +1,13 @@
 #include "Feature.h"
 
-float GetPartValue(int* rideInfo, DBPart::_DBPart part)
+float GetPartValue(int* rideInfo, DBPart::_DBPart part, const char* attrib)
 {
 	float val = 0;
 
 	if (rideInfo) {
 		int* partPtr = Game::GetPart(rideInfo, part);
 		if (partPtr) {
-			float* valPtr = (float*)Game::GetAppliedAttributeIParam(partPtr, Game::StringHash((char*)"VALUE"), 0);
+			float* valPtr = (float*)Game::GetAppliedAttributeIParam(partPtr, Game::StringHash(attrib), 0);
 
 			if (valPtr) {
 				val = *(valPtr + 1);
@@ -18,13 +18,9 @@ float GetPartValue(int* rideInfo, DBPart::_DBPart part)
 	return val;
 }
 
-int __stdcall GetCamber(int* rideInfo)
+float __stdcall GetCamber(int* rideInfo)
 {
-	float res = GetPartValue(rideInfo, DBPart::Attachment12);;
-
-	int ires = 0;
-	memcpy(&ires, &res, 4);
-	return ires;
+	return GetPartValue(rideInfo, DBPart::Attachment12, "ANGLE");;
 }
 
 DWORD Camber1 = 0x007DF771;
@@ -35,16 +31,13 @@ void __declspec(naked) CamberCave()
 		pushad;
 		push ecx;
 		call GetCamber;
-		push eax;
-		fld[esp];
-		pop eax;
 		popad;
 
 		jmp Camber1;
 	}
 }
 
-int __stdcall GetTrackWidth(int* rideInfo, int isRear, int original)
+float __stdcall GetTrackWidth(int* rideInfo, int isRear, int original)
 {
 	float res = (float)original * 0.001f;
 	auto bodyPtr = Game::GetPart(rideInfo, DBPart::Body);
@@ -58,13 +51,11 @@ int __stdcall GetTrackWidth(int* rideInfo, int isRear, int original)
 		}
 	}
 
-	res += GetPartValue(rideInfo, isRear ? DBPart::RearBadging : DBPart::FrontBadging);
-	res += GetPartValue(rideInfo, DBPart::Attachment13);
-	res += GetPartValue(rideInfo, DBPart::Attachment12) / 30.0f;
+	res += GetPartValue(rideInfo, isRear ? DBPart::RearBadging : DBPart::FrontBadging, "TIRE_OFFSET");
+	res += GetPartValue(rideInfo, DBPart::Attachment13, "TIRE_OFFSET");
+	res += GetPartValue(rideInfo, DBPart::Attachment12, "ANGLE") / 30.0f;
 
-	int ires = 0;
-	memcpy(&ires, &res, 4);
-	return ires;
+	return res;
 }
 
 void __declspec(naked) TrackWidthCave()
@@ -77,23 +68,56 @@ void __declspec(naked) TrackWidthCave()
 
 		mov ecx, [esp + 0x38];
 		push ecx;
-
 		push ebp;
-
 		mov ecx, [esp + 0x30];
 		add ecx, 0x3f0;
 		push[ecx];
 		call GetTrackWidth;
-
-		push eax;
-		fld[esp];
-		pop eax;
 
 		popad;
 
 		jmp Exit;
 	}
 }
+
+float __stdcall GetTireWidth(int* rideInfo, float original, int wheel)
+{
+	float mult = GetPartValue(rideInfo, DBPart::Attachment14, wheel < 2 ? "FRONT_TIRE_WIDTH" : "REAR_TIRE_WIDTH");
+	if (mult == 0.0f)
+	{
+		mult = 1.0f;
+	}
+
+	return original * mult;
+}
+
+void __declspec(naked) TireWidthCave()
+{
+	static constexpr auto Exit = 0x007CB8D0;
+
+	__asm
+	{
+		SAVE_REGS;
+		push[esp + 0x28];
+
+		mov eax, [eax];
+		push eax;
+
+		add esi, 0x3F0;
+		mov esi, [esi];
+		push esi;
+		call GetTireWidth;
+		push eax;
+		fstp[esp];
+		mov eax, [esp];
+		pop ebx;
+		RESTORE_REGS;
+
+		mov ebx, [esi + 0x0000324C];
+		jmp Exit;
+	}
+}
+
 
 void InitWheelAdjustments()
 {
@@ -107,4 +131,6 @@ void InitWheelAdjustments()
 	{
 		injector::MakeJMP(0x007CB85F, TrackWidthCave, true);
 	}
+
+	injector::MakeJMP(0x007CB8C8, TireWidthCave, true);
 }

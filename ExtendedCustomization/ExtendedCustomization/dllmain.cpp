@@ -12,7 +12,10 @@
 
 void Init()
 {
-	Config::Init();
+	if (!Config::Init())
+	{
+		return;
+	}
 
 	InitExhaustFX();
 	InitSpecialCustomization();
@@ -22,6 +25,9 @@ void Init()
 	InitWheelAdjustments();
 	FixFrontRearDecals();
 	InitNeon();
+#ifdef _DEBUG
+	*(int*)0x00A732A8 = 0;
+#endif
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
@@ -40,7 +46,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 		}
 		else
 		{
-			MessageBoxA(NULL, "This .exe is not supported.\nPlease use v1.4 English nfsc.exe (6,88 MB (7.217.152 bytes)).", "NFSC - Customization Extender", MB_ICONERROR);
+			MessageBoxA(NULL, "This .exe is not supported.\nPlease use v1.4 English nfsc.exe (6,88 MB (7.217.152 bytes)).", "NFSC - Extended Customization", MB_ICONERROR);
 			return FALSE;
 		}
 	}

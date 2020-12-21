@@ -3,7 +3,7 @@
 
 void MakeLod(char* str, char lod)
 {
-	if (strstr(str, "DAMAGE") == NULL)
+	//if (strstr(str, "DAMAGE") == NULL)
 	{
 		int len = strlen(str);
 		str[len - 1] = 'A';
