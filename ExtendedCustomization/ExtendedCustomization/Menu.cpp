@@ -3,7 +3,6 @@
 #include "Parts.h"
 #include "Config.h"
 
-int* CurrentCarPtr = (int*)0x00B74320;
 DBPart::_DBPart SpecialtiesMenu[12] = { DBPart::LicensePlate, DBPart::FrontBrake, DBPart::FrontRotor, DBPart::Attachment12,
 										DBPart::Attachment13, DBPart::Attachment14, DBPart::Attachment15, DBPart::FrontDecal,
 										DBPart::RearDecal, DBPart::Driver, DBPart::SteeringWheel, DBPart::GenericVinyls };
@@ -376,6 +375,116 @@ void __declspec(naked) DisablePartsCave()
 	}
 }
 
+struct PartSlot
+{
+	PartSlot* Prev;
+	PartSlot* Next;
+	int Hash;
+	void* PartPtr;
+	int Name;
+	DBPart::_DBPart PartId;
+	int Region;
+	int Val;
+};
+
+void GetPartsList(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int brandName, int innerRadius, bool autosculpt)
+{
+	int* partPtr = 0;
+	PartSlot* ListEnd = ListHead + 1;
+
+	int i = 0;
+	while (true)
+	{
+		int* rideInfo = GetRideInfo();
+		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, *rideInfo, partId, 0, partPtr, -1);
+		if (partPtr)
+		{
+			if (Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"STOCK"), 0) == 0)
+			{
+				// Check if part has mesh
+				DBPart::_DBPart meshParts[] = { DBPart::Hood, DBPart::Body, DBPart::FrontWheels, DBPart::FrontBadging, DBPart::RearBadging,
+					DBPart::FrontBumper, DBPart::RearBumper, DBPart::Skirt, DBPart::RoofScoop, DBPart::Spoiler, DBPart::LeftHeadlight, DBPart::LeftBrakelight,
+					DBPart::LeftMirror };
+				if (std::find(std::begin(meshParts), std::end(meshParts), partId) != std::end(meshParts))
+				{
+					int nameHash = Game::GetModelNameHash(partPtr, 0, 0, 0);
+					if (!Game::PartMeshExists(nameHash))
+					{
+						continue;
+					}
+				}
+
+				if ((partId == DBPart::FrontBrake || partId == DBPart::FrontRotor) && !Game::GetAppliedAttributeIParam(partPtr, Game::StringHash((char*)"MAX_LOD"), 0))
+				{
+					continue;
+				}
+
+				if (partId == DBPart::Exhaust && Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"CENTER"), 0) == 1)
+				{
+					continue;
+				}
+
+				if (partId == DBPart::FrontWheels && Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"INNER_RADIUS"), 0) != innerRadius)
+				{
+					continue;
+				}
+
+				bool isAutosculpt = Game::GetAppliedAttributeIParam(partPtr, Game::StringHash((char*)"MORPHTARGET_NUM"), 0) != NULL;
+				if ((autosculpt && !isAutosculpt) || (!autosculpt && isAutosculpt))
+				{
+					continue;
+				}
+
+				bool isCarbon = Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"CARBONFIBRE"), 0) == 1;
+				if ((carbon && !isCarbon) || (!carbon && isCarbon))
+				{
+					continue;
+				}
+			}
+
+			i++;
+			if (i > 70)
+			{
+				break;
+			}
+
+			// game stuff to add part to list
+			auto vslot = (int*)Game::j_malloc_0(autosculpt ? 0x24 : 0x1C);
+			*vslot = 0x009F9CF0;// vtable;
+			auto slot = (PartSlot*)(vslot + 1);
+			slot->Hash = 0x881F8EFA;
+			slot->PartId = partId;
+			slot->PartPtr = partPtr;
+			slot->Name = 0x009F9CD8;
+			if (autosculpt)
+			{
+				slot->Region = Game::AutosculptSelectablePart_ConvertSlotToRegion(partId);
+				slot->Val = 0;
+			}
+
+			ListEnd = ListHead->Next;
+			ListEnd->Prev = slot;
+			ListHead->Next = slot;
+			slot->Next = ListEnd;
+			slot->Prev = ListHead;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+void __cdecl GetPartsListStandart(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int brandName, int innerRadius)
+{
+	GetPartsList(partId, ListHead, carbon, brandName, innerRadius, false);
+}
+
+void __cdecl GetPartsListAutosculpt(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int brandName, int innerRadius)
+{
+	GetPartsList(partId, ListHead, carbon, brandName, innerRadius, true);
+}
+
 void InitMenu()
 {
 	injector::MakeJMP(0x0083FBF1, AddMainMenuItemsCave, true);
@@ -389,4 +498,7 @@ void InitMenu()
 
 	injector::WriteMemory(0x009F9D14, StandardSelectablePart_GetCategoryHash, true);
 	injector::MakeCALL(0x0084EB1F, GetCameraScreenName, true);
+
+	injector::MakeCALL(0x0085FA37, GetPartsListStandart, true);
+	//injector::MakeCALL(0x0085FA30, GetPartsListAutosculpt, true);
 }

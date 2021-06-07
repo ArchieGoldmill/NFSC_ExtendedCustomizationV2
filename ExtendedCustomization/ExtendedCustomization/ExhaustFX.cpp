@@ -1,21 +1,9 @@
 #include <vector>
 #include "Feature.h"
 #include "Config.h"
+#include "GameStructs.h"
 
 using namespace std;
-
-struct Vector
-{
-	float x;
-	float y;
-	float z;
-};
-
-struct VectorW
-{
-	Vector v;
-	float w;
-};
 
 struct RotationMatrix
 {

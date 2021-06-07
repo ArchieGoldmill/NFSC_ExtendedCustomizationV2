@@ -12,6 +12,8 @@ namespace DBPart
 		RightHeadlight = 0x2A,
 		RightHeadlightGlass = 0x2B,
 
+		Headlight = 0x50,
+
 		LeftBrakelight = 0x1E,
 		LeftBrakelightGlass = 0x1F,
 		RightBrakelight = 0x28,

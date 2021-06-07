@@ -176,6 +176,7 @@ copy "$(TargetDir)*.pdb" "E:\Games\Need for Speed - Carbon\scripts"  /y</Command
     <ClCompile Include="ForceLodA.cpp" />
     <ClCompile Include="GameApi.cpp" />
     <ClCompile Include="HandleSpecialCustomization.cpp" />
+    <ClCompile Include="HeadlightsColor.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Neon.cpp" />
     <ClCompile Include="RandomParts.cpp" />
@@ -190,7 +191,9 @@ copy "$(TargetDir)*.pdb" "E:\Games\Need for Speed - Carbon\scripts"  /y</Command
     <ClInclude Include="Fixes.h" />
     <ClInclude Include="ForceLodA.h" />
     <ClInclude Include="GameApi.h" />
+    <ClInclude Include="GameStructs.h" />
     <ClInclude Include="HandleSpecialCustomization.h" />
+    <ClInclude Include="HeadlightsColor.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Neon.h" />
     <ClInclude Include="Parts.h" />

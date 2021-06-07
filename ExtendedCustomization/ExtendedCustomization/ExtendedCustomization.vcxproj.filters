@@ -42,6 +42,9 @@
     <Filter Include="Features\SpecialCustomization">
       <UniqueIdentifier>{6208e9ba-64e5-4953-88e6-6505cf0e2ff9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Features\HeadlightsColor">
+      <UniqueIdentifier>{6b27cb60-57ac-4141-b9b1-031b4bb6b3fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -82,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="RandomParts.cpp">
       <Filter>Features\SpecialCustomization</Filter>
+    </ClCompile>
+    <ClCompile Include="HeadlightsColor.cpp">
+      <Filter>Features\HeadlightsColor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +132,12 @@
     </ClInclude>
     <ClInclude Include="RandomParts.h">
       <Filter>Features\SpecialCustomization</Filter>
+    </ClInclude>
+    <ClInclude Include="HeadlightsColor.h">
+      <Filter>Features\HeadlightsColor</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStructs.h">
+      <Filter>GameApi</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

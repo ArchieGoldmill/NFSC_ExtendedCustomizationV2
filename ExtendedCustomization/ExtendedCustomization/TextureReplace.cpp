@@ -184,7 +184,7 @@ void __stdcall LightMaterial(int* rideInfo, int emodel)
 		int* material = NULL;
 		if (*Game::GameState != 3)
 		{
-			material = Game::elGetLightMaterial(Game::StringHash("LIGHT_GLOW"), 1);
+			material = Game::elGetLightMaterial(Game::StringHash("BRAKELIGHT_GLOW"), 1);
 		}
 		else
 		{
@@ -194,7 +194,7 @@ void __stdcall LightMaterial(int* rideInfo, int emodel)
 		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("BRAKELIGHT"), (int)material);
 	}
 
-	if (carConfig->ReplaceBrakelightShader)
+	if (carConfig->ReplaceHeadlightShader)
 	{
 		int* material = NULL;
 		if (*Game::GameState != 3 && IsGlareOn(rideInfo))

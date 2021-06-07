@@ -26,11 +26,6 @@ void InstallPart(int* rideInfo, int* FECustomizationRecord, DBPart::_DBPart part
 	}
 }
 
-bool PartExists(int hash)
-{
-	return Game::PartModelExist(0x00A8FFF4, hash);
-}
-
 void HandleRoof(void* _this, int* rideInfo, int* FECustomizationRecord)
 {
 	auto carData = Config::Get(*rideInfo);
@@ -171,7 +166,7 @@ void HandleHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord, bo
 			char* carName = Game::GetCarTypeName(*rideInfo);
 			char buffer[100];
 			sprintf(buffer, "%s_KIT%02d_LEFT_HEADLIGHT_OFF_A", carName, kit);
-			if (PartExists(Game::StringHash(buffer)))
+			if (Game::PartMeshExists(Game::StringHash(buffer)))
 			{
 				InstallPart(rideInfo, FECustomizationRecord, DBPart::LeftHeadlight, GetPartByLodHash(DBPart::LeftHeadlight, Game::StringHash(buffer), rideInfo));
 				sprintf(buffer, "%s_KIT%02d_RIGHT_HEADLIGHT_OFF_A", carName, kit);
@@ -398,7 +393,7 @@ void HandleSkirt(void* _this, int* rideInfo, int* FECustomizationRecord)
 	char* carName = Game::GetCarTypeName(*rideInfo);
 	std::string skirtCap = carName;
 	skirtCap.append("_KIT00_SKIRT_CAPPED_A");
-	if (PartExists(Game::StringHash(skirtCap.c_str())))
+	if (Game::PartMeshExists(Game::StringHash(skirtCap.c_str())))
 	{
 		int* rearBumper = Game::GetPart(rideInfo, DBPart::RearBumper);
 		int* skirt = Game::GetPart(rideInfo, DBPart::Skirt);

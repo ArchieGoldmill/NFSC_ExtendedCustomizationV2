@@ -12,8 +12,9 @@ void MakeLod(char* str, char lod)
 
 int __cdecl ChangePartString(char* str, int modelHash)
 {
+	auto cfg = Config::GetGlobal();
 	auto config = Config::GetByHash(modelHash);
-	if (config->ForceLodA)
+	if (config->ForceLodA || cfg->ForceLodA)
 	{
 		MakeLod(str, 'A');
 	}

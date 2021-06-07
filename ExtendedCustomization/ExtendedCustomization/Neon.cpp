@@ -1,50 +1,22 @@
 #include "Feature.h"
 #include "Config.h"
 #include <vector>
-#ifdef _DEBUG
-#include <iostream>
-#endif
+#include "GameStructs.h"
 
-struct RenderExt
+float NeonBrightnessBackup = 0;
+float NeonDirectionBackup = 0;
+void AddRenderInfo(CarRenderInfo* renderInfo)
 {
-	int* CarRenderInfo;
-	float neonState;
-	float dir;
-};
-
-RenderExt RenderExtBackup;
-std::vector<RenderExt> RenderExts;
-
-void AddRenderInfo(int* renderInfo)
-{
-	RenderExt ext;
-
-	if (*Game::GameState == 3 && RenderExtBackup.dir != 0)
+	if (*Game::GameState == 3 && NeonBrightnessBackup)
 	{
-		ext = RenderExtBackup;
+		renderInfo->NeonBrightness = NeonBrightnessBackup;
+		renderInfo->NeonDirection = NeonDirectionBackup;
 	}
 	else
 	{
-		ext.neonState = (Game::Random(101) % 100 + 30) / 100.0f;
-		ext.dir = 1.2f;
-	}
-
-	ext.CarRenderInfo = renderInfo;
-
-	RenderExts.push_back(ext);
-}
-
-RenderExt* GetState(int* renderInfo)
-{
-	for (auto& i : RenderExts)
-	{
-		if (i.CarRenderInfo == renderInfo)
-		{
-			return &i;
-		}
-	}
-
-	return NULL;
+		renderInfo->NeonBrightness = (Game::Random(101) % 100 + 30) / 100.0f;
+		renderInfo->NeonDirection = 1.2f;
+	}	
 }
 
 void HandleFrontSteerAngle()
@@ -64,11 +36,11 @@ void HandleFrontSteerAngle()
 	}
 }
 
-int __stdcall SetNeonColor(int* renderInfo, int originalColor)
+int __stdcall SetNeonColor(CarRenderInfo* renderInfo, int originalColor)
 {
 	HandleFrontSteerAngle();
 
-	int* rideInfo = (int*)*(renderInfo + 0xFC);
+	auto rideInfo = renderInfo->RideInfo;
 
 	if (!rideInfo)
 	{
@@ -85,32 +57,29 @@ int __stdcall SetNeonColor(int* renderInfo, int originalColor)
 		g = Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"GREEN"), 0);
 		b = Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"BLUE"), 0);
 
-		if (Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"PULSE"), 0)) {
-			auto state = GetState(renderInfo);
-			if (state)
+		if (Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"PULSE"), 0))
+		{
+			if (!Game::IsPaused())
 			{
-				if (!Game::IsPaused())
+				renderInfo->NeonBrightness += renderInfo->NeonDirection * (*Game::DeltaTime);
+				if (renderInfo->NeonBrightness > 1.0f || renderInfo->NeonBrightness < 0.3f)
 				{
-					state->neonState += state->dir * *Game::DeltaTime;
-					if (state->neonState > 1 || state->neonState < 0.3f)
+					renderInfo->NeonDirection *= -1;
+					if (renderInfo->NeonBrightness > 1.0f)
 					{
-						state->dir = state->dir * -1.0f;
+						renderInfo->NeonBrightness = 1.0f;
 					}
-
-					if (state->neonState > 1)
+					else
 					{
-						state->neonState = 1;
-					}
-
-					if (state->neonState < 0.3f)
-					{
-						state->neonState = 0.3f;
+						renderInfo->NeonBrightness = 0.3f;
 					}
 				}
-				//std::cout << state->neonState << std::endl;
 
-				br = state->neonState;
+				NeonBrightnessBackup = renderInfo->NeonBrightness;
+				NeonDirectionBackup = renderInfo->NeonDirection;
 			}
+
+			br = renderInfo->NeonBrightness;
 		}
 	}
 	else
@@ -127,9 +96,10 @@ int __stdcall SetNeonColor(int* renderInfo, int originalColor)
 	return res;
 }
 
-DWORD ShadowColor1 = 0x007BEA6D;
 void __declspec(naked) ShadowColorCave()
 {
+	static constexpr auto  Exit = 0x007BEA6D;
+
 	__asm
 	{
 		SAVE_REGS;
@@ -140,14 +110,14 @@ void __declspec(naked) ShadowColorCave()
 		call SetNeonColor;
 
 		RESTORE_REGS;
-		jmp ShadowColor1;
+		jmp Exit;
 	}
 }
 
-const int _stdcall GetShadowStyle(int* renderInfo)
+const int _stdcall GetShadowStyle(CarRenderInfo* renderInfo)
 {
 	AddRenderInfo(renderInfo);
-	int* rideInfo = (int*)*(renderInfo + 0xFC);
+	auto rideInfo = renderInfo->RideInfo;
 	int* part = Game::GetPart(rideInfo, DBPart::Attachment15);
 
 	if (part)
@@ -173,39 +143,6 @@ void __declspec(naked) CarShadowCave()
 	}
 }
 
-void __stdcall RemoveRenderInfo(int* renderInfo)
-{
-	int len = RenderExts.size();
-	for (int i = 0; i < len; i++)
-	{
-		if (RenderExts[i].CarRenderInfo == renderInfo)
-		{
-			if (*Game::GameState == 3)
-			{
-				RenderExtBackup = RenderExts[i];
-			}
-
-			RenderExts.erase(RenderExts.begin() + i);
-			break;
-		}
-	}
-}
-
-void __declspec(naked) CarRenderInfoDtCave()
-{
-	static constexpr auto  Exit = 0x007D5287;
-
-	__asm
-	{
-		pushad;
-		push ecx;
-		call RemoveRenderInfo;
-		popad;
-
-		push 0x009AD4A3;
-		jmp Exit;
-	}
-}
 
 float CarDistMax = 2.0f;
 float CarDistMult = 0.5f;
@@ -221,7 +158,6 @@ void InitNeon()
 	}
 
 	injector::MakeJMP(0x007E5A6A, CarShadowCave, true);
-	injector::MakeJMP(0x007D5282, CarRenderInfoDtCave, true);
 	injector::MakeJMP(0x007BEA68, ShadowColorCave, true);
 
 	injector::WriteMemory<float*>(0x007BE4F4, &CarDistMax, true);

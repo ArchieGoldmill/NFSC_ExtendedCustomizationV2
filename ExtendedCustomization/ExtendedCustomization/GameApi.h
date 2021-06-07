@@ -22,6 +22,7 @@
 namespace Game
 {
 	void SetTargetFrontSteerAngle(float);
+	bool PartMeshExists(int hash);
 
 	extern bool AnimateFrontSteerAngle;
 	extern int* GameState;
@@ -40,6 +41,7 @@ namespace Game
 	extern int* PVehicleCount;
 	extern int* CarPartDB;
 	extern float* DeltaTime;
+	extern float** HeadlightFlare;
 
 	extern int(__cdecl* StringHash)(const char* str);
 	extern int(__cdecl* StringHash1)(const char*, int hash);
@@ -85,4 +87,6 @@ namespace Game
 	extern int* (__cdecl* elGetLightMaterial)(int, int);
 	extern int* (__cdecl* GetTextureInfo)(int, int, int);
 	extern bool(__cdecl* IsPaused)();
+	extern int(__cdecl* AutosculptSelectablePart_ConvertSlotToRegion)(int);
+	extern bool(__cdecl* RenderFlare)(int, int, int, float, int, int, int, float, int, float);
 }

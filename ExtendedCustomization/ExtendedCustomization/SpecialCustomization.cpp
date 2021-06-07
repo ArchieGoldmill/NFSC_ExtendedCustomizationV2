@@ -5,5 +5,5 @@
 void InitSpecialCustomization()
 {
 	InitHandleSpecialCustomization();
-	InitRandomParts();
+	//InitRandomParts();
 }

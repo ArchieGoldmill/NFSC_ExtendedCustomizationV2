@@ -25,6 +25,7 @@ namespace Game
 	int* PVehicleCount = (int*)0x00A9F164;
 	int* CarPartDB = (int*)0x00B76690;
 	float* DeltaTime = (float*)0x00A99A5C;
+	float** HeadlightFlare = (float**)0x00A6BF88;
 
 	int(__cdecl* StringHash)(const char*) = (int(__cdecl*)(const char*))0x471050;
 	int(__cdecl* StringHash1)(const char*, int) = (int(__cdecl*)(const char*, int))0x00471080;
@@ -69,5 +70,12 @@ namespace Game
 	void(__thiscall* eModel_ReplaceLightMaterial)(int, int, int) = (void(__thiscall*)(int, int, int))0x0055C0B0;
 	int* (__cdecl* elGetLightMaterial)(int, int) = (int* (__cdecl*)(int, int))0x007473A0;
 	int* (__cdecl* GetTextureInfo)(int, int, int) = (int* (__cdecl*)(int, int, int))0x0055CFD0;
-	bool (__cdecl* IsPaused)() = (bool (__cdecl*)())0x004A62E0;
+	bool(__cdecl* IsPaused)() = (bool(__cdecl*)())0x004A62E0;
+	int(__cdecl* AutosculptSelectablePart_ConvertSlotToRegion)(int) = (int(__cdecl*)(int))0x00843180;
+	bool(__cdecl* RenderFlare)(int, int, int, float, int, int, int, float, int, float) = (bool(__cdecl*)(int, int, int, float, int, int, int, float, int, float))0x0074D330;
+
+	bool PartMeshExists(int hash)
+	{
+		return Game::PartModelExist(0x00A8FFF4, hash);
+	}
 }

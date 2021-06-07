@@ -3,6 +3,33 @@
 #include <vector>
 #include "Parts.h"
 
+namespace Settings
+{
+	enum _Settings : int
+	{
+		RandomBody = 0,
+		RandomBumpers,
+		RandomSpoiler,
+		RandomSpoilerAS,
+		RandomRoofScoop,
+		RandomRoofScoopAS,
+		RandomHood,
+		RandomHoodAS,
+		RandomFrontDecals,
+		RandomRearDecals,
+		RandomGenericVinyls,
+		RandomVectorVinyls,
+		RandomLicensePlate,
+		RandomBrakes,
+		RandomNeon,
+		RandomTires,
+		RandomWheels,
+		RandomWheelsAS,
+		CheckVanillaMissingParts,
+		num_values
+	};
+}
+
 namespace Config
 {
 	enum _State :int
@@ -39,6 +66,8 @@ namespace Config
 		bool SunRoof;
 		bool PopupHeadlights;
 
+		_State Settings[Settings::num_values];
+
 		Part* GetPart(DBPart::_DBPart dbpart);
 	};
 
@@ -63,19 +92,6 @@ namespace Config
 
 		// Random parts
 		bool RandomEnabled;
-		bool RandomBody;
-		bool RandomSpoiler;
-		bool RandomRoofScoop;
-		bool RandomHood;
-		bool RandomFrontDecals;
-		bool RandomRearDecals;
-		bool RandomGenericVinyls;
-		bool RandomVectorVinyls;
-		bool RandomLicensePlate;
-		bool RandomBrakes;
-		bool RandomNeon;
-		bool RandomTires;
-		bool RandomWheels;
 	};
 
 	bool Init();
@@ -85,4 +101,5 @@ namespace Config
 	int GetPartHeader(int carId, DBPart::_DBPart part, bool isAS = false);
 	_State GetPartState(int carId, DBPart::_DBPart part);
 	char* GetPartCamera(int carId, DBPart::_DBPart dbpart);
+	_State GetSetting(int carId, Settings::_Settings setting);
 }

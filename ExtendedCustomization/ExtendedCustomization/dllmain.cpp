@@ -9,6 +9,7 @@
 #include "Neon.h"
 #include "WheelAdjustments.h"
 #include "Config.h"
+#include "HeadlightsColor.h"
 
 void Init()
 {
@@ -23,11 +24,9 @@ void Init()
 	InitForceLodA();
 	InitTextureReplace();
 	InitWheelAdjustments();
+	//InitHeadlightsColor();
 	FixFrontRearDecals();
 	InitNeon();
-#ifdef _DEBUG
-	*(int*)0x00A732A8 = 0;
-#endif
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)

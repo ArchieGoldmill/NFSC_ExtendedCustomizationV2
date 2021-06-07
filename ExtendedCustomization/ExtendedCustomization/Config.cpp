@@ -139,10 +139,20 @@ namespace Config
 		}
 	}
 
+	_State InitState(int value)
+	{
+		if (value < -1 || value > 1)
+		{
+			return _State::DefaultState;
+		}
+
+		return (_State)value;
+	}
+
 	void InitPart(CIniReader& iniReader, Car* cfg, const char* name, DBPart::_DBPart part)
 	{
 		Part menu;
-		menu.State = (_State)iniReader.ReadInteger(name, "Enabled", -1);
+		menu.State = InitState(iniReader.ReadInteger(name, "Enabled", -1));
 		menu.Header = Game::StringHash(iniReader.ReadString(name, "Header", ""));
 		menu.HeaderAS = Game::StringHash(iniReader.ReadString(name, "HeaderAS", ""));
 		if (menu.HeaderAS == -1)
@@ -252,19 +262,23 @@ namespace Config
 		glc->TireWidthMod = iniReader.ReadInteger("MODS", "TireWidthMod", 0) == 1;
 
 		glc->RandomEnabled = iniReader.ReadInteger("RANDOM_PARTS", "Enabled", 0) == 1;
-		glc->RandomBody = iniReader.ReadInteger("RANDOM_PARTS", "Body", 0) == 1;
-		glc->RandomWheels = iniReader.ReadInteger("RANDOM_PARTS", "Wheels", 0) == 1;
-		glc->RandomHood = iniReader.ReadInteger("RANDOM_PARTS", "Hood", 0) == 1;
-		glc->RandomRoofScoop = iniReader.ReadInteger("RANDOM_PARTS", "RoofScoop", 0) == 1;
-		glc->RandomSpoiler = iniReader.ReadInteger("RANDOM_PARTS", "Spoiler", 0) == 1;
-		glc->RandomGenericVinyls = iniReader.ReadInteger("RANDOM_PARTS", "GenericVinyls", 0) == 1;
-		glc->RandomVectorVinyls = iniReader.ReadInteger("RANDOM_PARTS", "VectorVinyls", 0) == 1;
-		glc->RandomFrontDecals = iniReader.ReadInteger("RANDOM_PARTS", "FrontDecals", 0) == 1;
-		glc->RandomRearDecals = iniReader.ReadInteger("RANDOM_PARTS", "RearDecals", 0) == 1;
-		glc->RandomLicensePlate = iniReader.ReadInteger("RANDOM_PARTS", "LicensePlate", 0) == 1;
-		glc->RandomNeon = iniReader.ReadInteger("RANDOM_PARTS", "Neon", 0) == 1;
-		glc->RandomTires = iniReader.ReadInteger("RANDOM_PARTS", "Tires", 0) == 1;
-		glc->RandomBrakes = iniReader.ReadInteger("RANDOM_PARTS", "Brakes", 0) == 1;
+		glc->Settings[Settings::RandomBody] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Body", -1));
+		glc->Settings[Settings::RandomWheels] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Wheels", -1));
+		glc->Settings[Settings::RandomHood] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Hood", -1));
+		glc->Settings[Settings::RandomHoodAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "HoodAS", -1));
+		glc->Settings[Settings::RandomRoofScoop] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RoofScoop", -1));
+		glc->Settings[Settings::RandomRoofScoopAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RoofScoopAS", -1));
+		glc->Settings[Settings::RandomSpoiler] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Spoiler", -1));
+		glc->Settings[Settings::RandomSpoilerAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "SpoilerAS", -1));
+		glc->Settings[Settings::RandomGenericVinyls] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "GenericVinyls", -1));
+		glc->Settings[Settings::RandomVectorVinyls] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "VectorVinyls", -1));
+		glc->Settings[Settings::RandomFrontDecals] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "FrontDecals", -1));
+		glc->Settings[Settings::RandomRearDecals] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RearDecals", -1));
+		glc->Settings[Settings::RandomLicensePlate] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "LicensePlate", -1));
+		glc->Settings[Settings::RandomNeon] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Neon", -1));
+		glc->Settings[Settings::RandomTires] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Tires", -1));
+		glc->Settings[Settings::RandomBrakes] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Brakes", -1));
+		glc->Settings[Settings::CheckVanillaMissingParts] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "CheckVanillaMissingParts", -1));
 	}
 
 	bool Init()
@@ -342,6 +356,21 @@ namespace Config
 		}
 
 		return _State::DisabledState;
+	}
+
+	_State GetSetting(int carId, Settings::_Settings setting)
+	{
+		auto carConfig = GetCar(carId);
+		if (carConfig)
+		{
+			auto st = carConfig->Settings[setting];
+			if (st != _State::DefaultState)
+			{
+				return st;
+			}
+		}
+
+		return glc->Settings[setting];
 	}
 
 	char* GetPartCamera(int carId, DBPart::_DBPart dbpart)
