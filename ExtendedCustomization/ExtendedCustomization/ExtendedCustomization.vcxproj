@@ -182,6 +182,7 @@ copy "$(TargetDir)*.pdb" "E:\Games\Need for Speed - Carbon\scripts"  /y</Command
     <ClCompile Include="RandomParts.cpp" />
     <ClCompile Include="SpecialCustomization.cpp" />
     <ClCompile Include="TextureReplace.cpp" />
+    <ClCompile Include="Vector.cpp" />
     <ClCompile Include="WheelAdjustments.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +201,7 @@ copy "$(TargetDir)*.pdb" "E:\Games\Need for Speed - Carbon\scripts"  /y</Command
     <ClInclude Include="RandomParts.h" />
     <ClInclude Include="SpecialCustomization.h" />
     <ClInclude Include="TextureReplace.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="WheelAdjustments.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,17 +1,5 @@
 #pragma once
-
-struct Vector
-{
-	float x;
-	float y;
-	float z;
-};
-
-struct VectorW
-{
-	Vector v;
-	float w;
-};
+#include "Vector.h"
 
 struct RideInfo
 {

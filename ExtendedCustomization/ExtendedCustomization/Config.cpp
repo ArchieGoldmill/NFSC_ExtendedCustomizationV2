@@ -255,11 +255,11 @@ namespace Config
 		*Game::FrontSteerAngle = glc->DefaultFrontSteerAngle = iniReader.ReadInteger("GENERAL", "FrontSteerAngle", 0);
 
 		glc->NeonMod = iniReader.ReadInteger("MODS", "Neon", 0) == 1;
-		glc->TiresMod = iniReader.ReadInteger("MODS", "Neon", 0) == 1;
+		glc->TiresMod = iniReader.ReadInteger("MODS", "Tires", 0) == 1;
 		glc->LicensePlateMod = iniReader.ReadInteger("MODS", "LicensePlate", 0) == 1;
-		glc->CamberMod = iniReader.ReadInteger("MODS", "CamberMod", 0) == 1;
-		glc->TrackWidthMod = iniReader.ReadInteger("MODS", "TrackWidthMod", 0) == 1;
-		glc->TireWidthMod = iniReader.ReadInteger("MODS", "TireWidthMod", 0) == 1;
+		glc->CamberMod = iniReader.ReadInteger("MODS", "Camber", 0) == 1;
+		glc->TrackWidthMod = iniReader.ReadInteger("MODS", "TrackWidth", 0) == 1;
+		glc->TireWidthMod = iniReader.ReadInteger("MODS", "TireWidth", 0) == 1;
 
 		glc->RandomEnabled = iniReader.ReadInteger("RANDOM_PARTS", "Enabled", 0) == 1;
 		glc->Settings[Settings::RandomBody] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Body", -1));

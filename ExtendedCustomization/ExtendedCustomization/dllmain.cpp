@@ -24,7 +24,7 @@ void Init()
 	InitForceLodA();
 	InitTextureReplace();
 	InitWheelAdjustments();
-	//InitHeadlightsColor();
+	InitHeadlightsColor();
 	FixFrontRearDecals();
 	InitNeon();
 }

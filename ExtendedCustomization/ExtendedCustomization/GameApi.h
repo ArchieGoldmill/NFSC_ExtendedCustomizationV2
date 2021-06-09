@@ -42,6 +42,7 @@ namespace Game
 	extern int* CarPartDB;
 	extern float* DeltaTime;
 	extern float** HeadlightFlare;
+	extern int* FECarRecord;
 
 	extern int(__cdecl* StringHash)(const char* str);
 	extern int(__cdecl* StringHash1)(const char*, int hash);

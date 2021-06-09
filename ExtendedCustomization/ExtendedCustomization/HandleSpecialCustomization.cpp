@@ -331,10 +331,15 @@ void HandleExhaust(void* _this, int* rideInfo, int* FECustomizationRecord)
 		}
 	}
 
+	if (!rearBumper)
+	{
+		UninstallPart(rideInfo, FECustomizationRecord, DBPart::Exhaust);
+	}
+
 	//Game::InstallExhaustHack(rideInfo, FECustomizationRecord);
 }
 
-void InstallDoorLine(void* _this, int* rideInfo, int* FECustomizationRecord,char* carName)
+void InstallDoorLine(void* _this, int* rideInfo, int* FECustomizationRecord, char* carName)
 {
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::DoorLine, 1, "%s_KIT00_DOORLINE", carName);
 }

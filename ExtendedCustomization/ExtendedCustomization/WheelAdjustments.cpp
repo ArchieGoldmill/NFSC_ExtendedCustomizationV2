@@ -132,5 +132,8 @@ void InitWheelAdjustments()
 		injector::MakeJMP(0x007CB85F, TrackWidthCave, true);
 	}
 
-	injector::MakeJMP(0x007CB8C8, TireWidthCave, true);
+	if (config->TireWidthMod)
+	{
+		injector::MakeJMP(0x007CB8C8, TireWidthCave, true);
+	}
 }

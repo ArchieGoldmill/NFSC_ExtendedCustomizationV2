@@ -45,6 +45,9 @@
     <Filter Include="Features\HeadlightsColor">
       <UniqueIdentifier>{6b27cb60-57ac-4141-b9b1-031b4bb6b3fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameApi\GameStructs">
+      <UniqueIdentifier>{95d03925-aa09-43ee-a7ef-fd17a5f061a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="HeadlightsColor.cpp">
       <Filter>Features\HeadlightsColor</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector.cpp">
+      <Filter>GameApi\GameStructs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +143,10 @@
       <Filter>Features\HeadlightsColor</Filter>
     </ClInclude>
     <ClInclude Include="GameStructs.h">
-      <Filter>GameApi</Filter>
+      <Filter>GameApi\GameStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>GameApi\GameStructs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

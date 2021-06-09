@@ -26,6 +26,7 @@ namespace Game
 	int* CarPartDB = (int*)0x00B76690;
 	float* DeltaTime = (float*)0x00A99A5C;
 	float** HeadlightFlare = (float**)0x00A6BF88;
+	int* FECarRecord = (int*)0x00BBABAC;
 
 	int(__cdecl* StringHash)(const char*) = (int(__cdecl*)(const char*))0x471050;
 	int(__cdecl* StringHash1)(const char*, int) = (int(__cdecl*)(const char*, int))0x00471080;
