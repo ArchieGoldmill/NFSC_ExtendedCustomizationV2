@@ -102,7 +102,7 @@ int GetNumCarParts(DBPart::_DBPart part, int carId, int autosculpt)
 	return count;
 }
 
-int* SetRandomPart(DBPart::_DBPart part, int* rideInfo, int autosculpt = 0)
+int* SetRandomPart1(DBPart::_DBPart part, int* rideInfo, int autosculpt = 0)
 {
 	int n = GetNumCarParts(part, *rideInfo, autosculpt);
 	if (n == 0)
@@ -117,7 +117,7 @@ int* SetRandomPart(DBPart::_DBPart part, int* rideInfo, int autosculpt = 0)
 	{
 		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, *rideInfo, part, 0, partPtr, -1);
 
-		if (!CheckPart(*rideInfo,part, partPtr, autosculpt))
+		if (!CheckPart(*rideInfo, part, partPtr, autosculpt))
 		{
 			continue;
 		}
@@ -131,13 +131,13 @@ int* SetRandomPart(DBPart::_DBPart part, int* rideInfo, int autosculpt = 0)
 
 	if (partPtr)
 	{
-		Game::SetPart(rideInfo, part, partPtr, 1);
+		//Game::SetPart(rideInfo, part, partPtr, 1);
 	}
 
 	return partPtr;
 }
 
-void __fastcall SetRandomParts(int* rideInfo, int param, int hash)
+void __fastcall SetRandomParts1(RideInfo* rideInfo, int param, int hash)
 {
 	//auto config = Config::GetGlobal();
 	//auto carType = *Game::CarTypeInfoArray + 0x34 * *rideInfo;
@@ -249,13 +249,92 @@ void __fastcall SetRandomParts(int* rideInfo, int param, int hash)
 	//	}
 	//}
 
-	HandleSpecialCustomization(NULL, rideInfo, NULL, true);
+	//HandleSpecialCustomization(NULL, rideInfo, NULL, true);
+}
+
+std::vector<int*> GetPartList(RideInfo* rideInfo, DBPart::_DBPart part)
+{
+	std::vector<int*> parts;
+
+	int* partPtr = 0;
+	while (true)
+	{
+		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, rideInfo->CarId, part, 0, partPtr, -1);
+		if (partPtr)
+		{
+			if (!IsPartMissing(part, rideInfo->CarId, partPtr) && !IsAustosculpt(partPtr) && !Game::IsStock(partPtr))
+			{
+				parts.push_back(partPtr);
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	return parts;
+}
+
+int* SetRandomPart(RideInfo* rideInfo, DBPart::_DBPart part)
+{
+	auto parts = GetPartList(rideInfo, part);
+	if (parts.size() == 0)
+	{
+		return NULL;
+	}
+
+	int rnd = Game::Random(parts.size());
+	if (rnd > parts.size() - 1)
+	{
+		rnd = parts.size() - 1;
+	}
+
+	if (rnd < 0)
+	{
+		rnd = 0;
+	}
+
+	auto partPtr = parts[rnd];
+	Game::SetPart(rideInfo, part, partPtr, 1);
+	return partPtr;
+}
+
+void __fastcall SetRandomParts(RideInfo* rideInfo, int param, int hash)
+{
+	SetRandomPart(rideInfo, DBPart::LicensePlate);
+	SetRandomPart(rideInfo, DBPart::FrontWheels);
+	SetRandomPart(rideInfo, DBPart::Spoiler);
+	SetRandomPart(rideInfo, DBPart::FrontDecal);
+	SetRandomPart(rideInfo, DBPart::RearDecal);
+	SetRandomPart(rideInfo, DBPart::Attachment14);
+	SetRandomPart(rideInfo, DBPart::Attachment15);
+	SetRandomPart(rideInfo, DBPart::Hood);
+
+	if (!Game::GetPart(rideInfo, DBPart::GenericVinyls))
+	{
+		if (Game::Random(2))
+		{
+			SetRandomPart(rideInfo, DBPart::GenericVinyls);
+		}
+	}
+
+	int* bodyPart = SetRandomPart(rideInfo, DBPart::Body);
+	if (bodyPart && !Game::IsStock(bodyPart))
+	{
+		Game::SetPart(rideInfo, DBPart::FrontBumper, 0, 1);
+		Game::SetPart(rideInfo, DBPart::RearBumper, 0, 1);
+		Game::SetPart(rideInfo, DBPart::Skirt, 0, 1);
+		Game::SetPart(rideInfo, DBPart::Exhaust, 0, 1);
+	}
+
+	rideInfo->RideHeight = 2.0f;
 }
 
 void InitRandomParts()
 {
 	auto config = Config::GetGlobal();
-	if (config->RandomEnabled)
+	//if (config->RandomEnabled)
 	{
 		injector::MakeCALL(0x00629D69, SetRandomParts, true);
 	}

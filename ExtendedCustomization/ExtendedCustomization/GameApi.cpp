@@ -42,9 +42,9 @@ namespace Game
 	int(__cdecl* bSNPrintf)(char*, int, const char*, ...) = (int(__cdecl*)(char*, int, const char*, ...))0x475C30;
 	int* (__thiscall* GetPart)(void*, DBPart::_DBPart) = (int* (__thiscall*)(void*, DBPart::_DBPart))0x7B06F0;
 	int(__thiscall* GetPartNameHash)(void*) = (int(__thiscall*)(void*))0x7CD930;
-	int(__cdecl* InstallPart)(void*, int*, int*, int, int, const char*, ...) = (int(__cdecl*)(void*, int*, int*, int, int, const char*, ...))0x84F040;
+	int(__cdecl* InstallPart)(void*, RideInfo*, int*, int, int, const char*, ...) = (int(__cdecl*)(void*, RideInfo*, int*, int, int, const char*, ...))0x84F040;
 	int(__thiscall* UnInstallPart)(void*, int, int) = (int(__thiscall*)(void*, int, int))0x004AE380;
-	int(__thiscall* SetPart)(int*, DBPart::_DBPart, int*, int) = (int(__thiscall*)(int*, DBPart::_DBPart, int*, int))0x007D67A0;
+	int(__thiscall* SetPart)(RideInfo*, DBPart::_DBPart, int*, int) = (int(__thiscall*)(RideInfo*, DBPart::_DBPart, int*, int))0x007D67A0;
 	int(__thiscall* FECustomizationRecord_SetInstalledPart)(void*, DBPart::_DBPart, int*, int, char) = (int(__thiscall*)(void*, DBPart::_DBPart, int*, int, char))0x004BAC50;
 	bool(__thiscall* IsStock)(void*) = (bool(__thiscall*)(void*))0x7CA040;
 	int(__thiscall* StandardSelectablePart_GetCategoryHash)(int*) = (int(__thiscall*)(int*))0x00842670;
@@ -61,6 +61,7 @@ namespace Game
 	int* (__thiscall* GetCarPart)(int, int, int, int, int, int*, int) = (int* (__thiscall*)(int, int, int, int, int, int*, int))0x007CDDF0;
 	void* (__thiscall* GetCameraScreenName)(int*, char*, char*) = (void* (__thiscall*)(int*, char*, char*))0x00840040;
 	int(__thiscall* GetPartHashToSelect)(void*, int, char) = (int(__thiscall*)(void*, int, char))0x0085EE80;
+	double(__thiscall* CarRenderInfo_DrawAmbientShadow)(CarRenderInfo*, int, float*, float, int, int, int) = (double(__thiscall*)(CarRenderInfo*, int, float*, float, int, int, int))0x007BE4C0;
 	void(__cdecl* bSafeStrCpy)(char*, char*, int) = (void(__cdecl*)(char*, char*, int))0x00471230;
 	int(__stdcall* ShowPartWarning)(int, int) = (int(__stdcall*)(int, int))0x0085F8F0;
 	int(__stdcall* InstallExhaustHack)(int*, int*) = (int(__stdcall*)(int*, int*))0x0084F0D0;
@@ -69,10 +70,20 @@ namespace Game
 	bool(__thiscall* PVehicle_IsGlareOn)(int*, int) = (bool(__thiscall*)(int*, int))0x6D8080;
 	int(__thiscall* eViewPlatInterface_Render)(void*, int, int, int, int, int, int) = (int(__thiscall*)(void*, int, int, int, int, int, int))0x00729320;
 	void(__thiscall* eModel_ReplaceLightMaterial)(int, int, int) = (void(__thiscall*)(int, int, int))0x0055C0B0;
-	int* (__cdecl* elGetLightMaterial)(int, int) = (int* (__cdecl*)(int, int))0x007473A0;
+	Material* (__cdecl* elGetLightMaterial)(int, int) = (Material * (__cdecl*)(int, int))0x007473A0;
 	int* (__cdecl* GetTextureInfo)(int, int, int) = (int* (__cdecl*)(int, int, int))0x0055CFD0;
 	bool(__cdecl* IsPaused)() = (bool(__cdecl*)())0x004A62E0;
 	int(__cdecl* AutosculptSelectablePart_ConvertSlotToRegion)(int) = (int(__cdecl*)(int))0x00843180;
+	FEObject* (__thiscall* FEPackage_FindObjectByHash)(void*, int) = (FEObject* (__thiscall*)(void*, int))0x005F3760;
+	FEObject* (__thiscall* FEObject_Clone)(FEObject*, bool) = (FEObject * (__thiscall*)(FEObject*, bool))0x005FEB80;
+	FEGroup* (__thiscall* FEGroup_Clone)(FEGroup*, bool) = (FEGroup * (__thiscall*)(FEGroup*, bool))0x006001C0;
+	void (__thiscall* FEPackage_BuildMouseObjectStateList)(FEPackage*) = (void (__thiscall*)(FEPackage*))0x005F3B70;
+	void (__thiscall* FEPackage_ConnectObjectResources)(FEPackage*) = (void (__thiscall*)(FEPackage*))0x005F3A80;
+	FEObjectMouseState* (__thiscall* FEPackage_GetMouseObjectState)(FEPackage*, FEObject*) = (FEObjectMouseState * (__thiscall*)(FEPackage*, FEObject*))0x005ECF70;
+	void* (__stdcall* cFEng_FindPackage)(char*) = (void* (__stdcall*)(char*))0x005983F0;
+	int* (__thiscall* FEMinList_AddNode)(FEMinList*, FEObject*) = (int* (__thiscall*)(FEMinList*, FEObject*))0x5D11A0;
+	bool(__thiscall* FEPackage__Startup)(void*, int) = (bool(__thiscall*)(void*, int))0x005F7B30;
+	void*(__thiscall* DynamicLightCtor)(void*) = (void*(__thiscall*)(void*))0x736570;
 	bool(__cdecl* RenderFlare)(int, int, int, float, int, int, int, float, int, float) = (bool(__cdecl*)(int, int, int, float, int, int, int, float, int, float))0x0074D330;
 
 	bool PartMeshExists(int hash)

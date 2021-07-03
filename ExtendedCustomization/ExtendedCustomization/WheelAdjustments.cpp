@@ -1,10 +1,11 @@
 #include "Feature.h"
 
-float GetPartValue(int* rideInfo, DBPart::_DBPart part, const char* attrib)
+float GetPartValue(RideInfo* rideInfo, DBPart::_DBPart part, const char* attrib)
 {
 	float val = 0;
 
 	if (rideInfo) {
+		rideInfo->RenderUsage = 0;
 		int* partPtr = Game::GetPart(rideInfo, part);
 		if (partPtr) {
 			float* valPtr = (float*)Game::GetAppliedAttributeIParam(partPtr, Game::StringHash(attrib), 0);
@@ -18,7 +19,7 @@ float GetPartValue(int* rideInfo, DBPart::_DBPart part, const char* attrib)
 	return val;
 }
 
-float __stdcall GetCamber(int* rideInfo)
+float __stdcall GetCamber(RideInfo* rideInfo)
 {
 	return GetPartValue(rideInfo, DBPart::Attachment12, "ANGLE");;
 }
@@ -37,7 +38,7 @@ void __declspec(naked) CamberCave()
 	}
 }
 
-float __stdcall GetTrackWidth(int* rideInfo, int isRear, int original)
+float __stdcall GetTrackWidth(RideInfo* rideInfo, int isRear, int original)
 {
 	float res = (float)original * 0.001f;
 	auto bodyPtr = Game::GetPart(rideInfo, DBPart::Body);
@@ -80,7 +81,7 @@ void __declspec(naked) TrackWidthCave()
 	}
 }
 
-float __stdcall GetTireWidth(int* rideInfo, float original, int wheel)
+float __stdcall GetTireWidth(RideInfo* rideInfo, float original, int wheel)
 {
 	float mult = GetPartValue(rideInfo, DBPart::Attachment14, wheel < 2 ? "FRONT_TIRE_WIDTH" : "REAR_TIRE_WIDTH");
 	if (mult == 0.0f)

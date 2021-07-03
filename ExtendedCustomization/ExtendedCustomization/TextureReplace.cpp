@@ -13,7 +13,7 @@ struct TextureReplaceNode
 
 void __stdcall HandleTextureReplacements(int* texPtr)
 {
-	int* rideInfo = (int*)(*(texPtr + 0xFC));
+	auto rideInfo = (RideInfo*)(*(texPtr + 0xFC));
 	auto config = Config::GetGlobal();
 
 	if (config->TiresMod)
@@ -53,7 +53,7 @@ void __stdcall HandleTextureReplacements(int* texPtr)
 	if (config->LicensePlateMod)
 	{
 		int hash = 0;
-		auto carType = *Game::CarTypeInfoArray + 0x34 * *rideInfo;
+		auto carType = *Game::CarTypeInfoArray + 0x34 * rideInfo->CarId;
 		int* licensePlatePtr = Game::GetPart(rideInfo, DBPart::LicensePlate);
 		if (carType && *(carType + 0x25) == 1)
 		{
@@ -142,6 +142,7 @@ int __stdcall HeadLightsOnOff(int* renderInfo)
 
 		if (*Game::GameState == 6)
 		{
+			return 0;
 			return !IsGlareOn(rideInfo);
 		}
 	}
@@ -181,7 +182,8 @@ void __stdcall LightMaterial(int* rideInfo, int emodel)
 
 	if (carConfig->ReplaceBrakelightShader)
 	{
-		int* material = NULL;
+
+		Material* material = NULL;
 		if (*Game::GameState != 3)
 		{
 			material = Game::elGetLightMaterial(Game::StringHash("BRAKELIGHT_GLOW"), 1);
@@ -191,12 +193,12 @@ void __stdcall LightMaterial(int* rideInfo, int emodel)
 			material = Game::elGetLightMaterial(Game::StringHash("BRAKELIGHT"), 1);
 		}
 
-		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("BRAKELIGHT"), (int)material);
+		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("BRAKELIGHTG"), (int)material);
 	}
 
 	if (carConfig->ReplaceHeadlightShader)
 	{
-		int* material = NULL;
+		Material* material = NULL;
 		if (*Game::GameState != 3 && IsGlareOn(rideInfo))
 		{
 			material = Game::elGetLightMaterial(Game::StringHash("LIGHT_GLOW"), 1);
@@ -206,7 +208,7 @@ void __stdcall LightMaterial(int* rideInfo, int emodel)
 			material = Game::elGetLightMaterial(Game::StringHash("HEADLIGHTREFLECTOR"), 1);
 		}
 
-		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("HEADLIGHTREFLECTOR"), (int)material);
+		Game::eModel_ReplaceLightMaterial(emodel, Game::StringHash("HEADLIGHTG"), (int)material);
 	}
 }
 
@@ -329,17 +331,9 @@ void __declspec(naked) BrakelightOnfCave()
 
 void InitTextureReplace()
 {
-	auto config = Config::GetGlobal();
-
-	if (config->FixWheelMirror)
-	{
-		char makeWheelsRotated[3] = { 0xB0, 0x00, 0x90 };
-		injector::WriteMemoryRaw(0x007E585D, makeWheelsRotated, 3, true);
-	}
-
 	injector::MakeJMP(0x007D9E14, HandleTextureReplacementsCave, true);
 	injector::MakeJMP(0x007ADCA8, HeadLightsOnOffCave, true);
-	injector::MakeJMP(0x007DEF18, LightMaterialCave, true);
+	//injector::MakeJMP(0x007DEF18, LightMaterialCave, true);
 	injector::MakeJMP(0x007ADE83, BrakelightOnfCave, true);
 
 	injector::WriteMemory(0x007CECC7, (DBPart::LeftHeadlight + 0x15) * 4, true);

@@ -9,7 +9,8 @@ namespace Localizator
 		static void Main(string[] args)
 		{
 			// Might remove this hardcode later)
-			string path = @"E:\Games\Need for Speed - Carbon\_mods\ExtendedCustomization\Install\Binary\Localization";
+			string path = @"E:\Games\Need for Speed - Carbon\_mods\ExtendedCustomization\_release\Extended Customization\Binary\Localization";
+			//string path = @"E:\Games\Need for Speed - Carbon\_mods\cars\wheels\autosculpt\mod\[NFSC] Autosculpt Rims Pack 2.0\Binary\Localization";
 
 			var files = new string[] {"Danish", "Dutch", "Finnish", "French", "German",
 				"Italian", "Labels", "Largest", "Mexican", "Polish", "Russian", "Spanish", "Swedish"};

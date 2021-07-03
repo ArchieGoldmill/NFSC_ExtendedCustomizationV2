@@ -36,6 +36,16 @@ void __cdecl HeadlightsFalreColor(int* rideInfo, int a1, int a2, int a3, float a
 	ptr[2] = b1;
 	ptr[3] = b2;
 	ptr[4] = b3;
+
+	//int* tex = Game::GetTextureInfo(Game::StringHash("HEADLIGHT_XENON_YEL"), 0, 0);
+	//int** texturePtr = (int**)0x00B4303C;
+	//*texturePtr = tex;
+
+	//texturePtr = (int**)0x00B43040;
+	//*texturePtr = tex;
+
+	//texturePtr = (int**)0x00B43038;
+	//*texturePtr = tex;
 }
 
 void __declspec(naked) HeadlightsFalreColorCave()
@@ -53,7 +63,38 @@ void __declspec(naked) HeadlightsFalreColorCave()
 	}
 }
 
+int* DynamicLights;
+
+void __declspec(naked) HeadlightsCave()
+{
+	static constexpr auto  Exit = 0x0074A560;
+	static constexpr auto  Func1 = 0x0074A380;
+
+	__asm
+	{
+		mov eax, 0x80;
+		mul esi;
+		add eax, DynamicLights;
+		call Func1;
+		jmp Exit;
+	}
+}
+
 void InitHeadlightsColor()
 {
+	//const int carDynamicLightsCount = 20;
+	//const int carDynamicLightSize = 0x80;
+	//DynamicLights = (int*)calloc(carDynamicLightsCount, carDynamicLightSize);
+	//for (int i = 0; i < carDynamicLightsCount; i++)
+	//{
+	//	int* ptr = DynamicLights + (carDynamicLightSize / 4) * i;
+	//	Game::DynamicLightCtor(ptr);
+
+	//	ptr[0] = 0x00B1B620;
+	//	ptr[1] = 0x009EA844;
+	//	ptr[2] = 9;
+	//}
+
+	//injector::MakeJMP(0x0074A557, HeadlightsCave, true);
 	//injector::MakeJMP(0x007CC641, HeadlightsFalreColorCave, true);
 }

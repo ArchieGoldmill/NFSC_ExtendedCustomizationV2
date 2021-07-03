@@ -252,6 +252,7 @@ namespace Config
 		glc->AllowStockRimsPaint = iniReader.ReadInteger("GENERAL", "AllowStockRimsPaint", 0) == 1;
 		glc->FixFrontRearDecals = iniReader.ReadInteger("GENERAL", "FixFrontRearDecals", 0) == 1;
 		glc->AllVinylsMirrorable = iniReader.ReadInteger("GENERAL", "AllVinylsMirrorable ", 0) == 1;
+		glc->MainGarage = iniReader.ReadInteger("GENERAL", "MainGarage", 0);
 		*Game::FrontSteerAngle = glc->DefaultFrontSteerAngle = iniReader.ReadInteger("GENERAL", "FrontSteerAngle", 0);
 
 		glc->NeonMod = iniReader.ReadInteger("MODS", "Neon", 0) == 1;
@@ -261,24 +262,24 @@ namespace Config
 		glc->TrackWidthMod = iniReader.ReadInteger("MODS", "TrackWidth", 0) == 1;
 		glc->TireWidthMod = iniReader.ReadInteger("MODS", "TireWidth", 0) == 1;
 
-		glc->RandomEnabled = iniReader.ReadInteger("RANDOM_PARTS", "Enabled", 0) == 1;
-		glc->Settings[Settings::RandomBody] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Body", -1));
-		glc->Settings[Settings::RandomWheels] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Wheels", -1));
-		glc->Settings[Settings::RandomHood] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Hood", -1));
-		glc->Settings[Settings::RandomHoodAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "HoodAS", -1));
-		glc->Settings[Settings::RandomRoofScoop] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RoofScoop", -1));
-		glc->Settings[Settings::RandomRoofScoopAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RoofScoopAS", -1));
-		glc->Settings[Settings::RandomSpoiler] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Spoiler", -1));
-		glc->Settings[Settings::RandomSpoilerAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "SpoilerAS", -1));
-		glc->Settings[Settings::RandomGenericVinyls] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "GenericVinyls", -1));
-		glc->Settings[Settings::RandomVectorVinyls] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "VectorVinyls", -1));
-		glc->Settings[Settings::RandomFrontDecals] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "FrontDecals", -1));
-		glc->Settings[Settings::RandomRearDecals] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RearDecals", -1));
-		glc->Settings[Settings::RandomLicensePlate] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "LicensePlate", -1));
-		glc->Settings[Settings::RandomNeon] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Neon", -1));
-		glc->Settings[Settings::RandomTires] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Tires", -1));
-		glc->Settings[Settings::RandomBrakes] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Brakes", -1));
-		glc->Settings[Settings::CheckVanillaMissingParts] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "CheckVanillaMissingParts", -1));
+		//glc->RandomEnabled = iniReader.ReadInteger("RANDOM_PARTS", "Enabled", 0) == 1;
+		//glc->Settings[Settings::RandomBody] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Body", -1));
+		//glc->Settings[Settings::RandomWheels] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Wheels", -1));
+		//glc->Settings[Settings::RandomHood] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Hood", -1));
+		//glc->Settings[Settings::RandomHoodAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "HoodAS", -1));
+		//glc->Settings[Settings::RandomRoofScoop] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RoofScoop", -1));
+		//glc->Settings[Settings::RandomRoofScoopAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RoofScoopAS", -1));
+		//glc->Settings[Settings::RandomSpoiler] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Spoiler", -1));
+		//glc->Settings[Settings::RandomSpoilerAS] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "SpoilerAS", -1));
+		//glc->Settings[Settings::RandomGenericVinyls] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "GenericVinyls", -1));
+		//glc->Settings[Settings::RandomVectorVinyls] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "VectorVinyls", -1));
+		//glc->Settings[Settings::RandomFrontDecals] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "FrontDecals", -1));
+		//glc->Settings[Settings::RandomRearDecals] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "RearDecals", -1));
+		//glc->Settings[Settings::RandomLicensePlate] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "LicensePlate", -1));
+		//glc->Settings[Settings::RandomNeon] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Neon", -1));
+		//glc->Settings[Settings::RandomTires] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Tires", -1));
+		//glc->Settings[Settings::RandomBrakes] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "Brakes", -1));
+		//glc->Settings[Settings::CheckVanillaMissingParts] = InitState(iniReader.ReadInteger("RANDOM_PARTS", "CheckVanillaMissingParts", -1));
 	}
 
 	bool Init()

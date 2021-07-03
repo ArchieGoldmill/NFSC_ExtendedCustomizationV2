@@ -87,6 +87,12 @@ void FixFrontRearDecals()
 		injector::WriteMemoryRaw(0x0083F749, disableStockRimCheck, 6, true);
 	}
 
+	if (config->FixWheelMirror)
+	{
+		char makeWheelsRotated[3] = { 0xB0, 0x00, 0x90 };
+		injector::WriteMemoryRaw(0x007E585D, makeWheelsRotated, 3, true);
+	}
+
 	// Fix wheels render
 	injector::WriteMemory<char>(0x007E0472, 0xEB, true);
 	injector::WriteMemory<char>(0x007E0216, 0xEB, true);

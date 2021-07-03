@@ -1,5 +1,6 @@
 #pragma once
 #include "Parts.h"
+#include "GameStructs.h"
 
 #define SAVE_REGS __asm\
 {\
@@ -58,9 +59,9 @@ namespace Game
 	extern int(__cdecl* bSNPrintf)(char* buffer, int size, const char* str, ...);
 	extern int* (__thiscall* GetPart)(void* rideInfo, DBPart::_DBPart partNum);
 	extern int(__thiscall* GetPartNameHash)(void* _this);
-	extern int(__cdecl* InstallPart)(void* _this, int* RideInfo, int* FECustomizationRecord, int partNum, int a5, const char* str, ...);
+	extern int(__cdecl* InstallPart)(void* _this, RideInfo* RideInfo, int* FECustomizationRecord, int partNum, int a5, const char* str, ...);
 	extern int(__thiscall* UnInstallPart)(void* FECustomizationRecord, int carId, int partId);
-	extern int(__thiscall* SetPart)(int* RideInfo, DBPart::_DBPart partId, int* part, int);
+	extern int(__thiscall* SetPart)(RideInfo* rideInfo, DBPart::_DBPart partId, int* part, int);
 	extern int(__thiscall* FECustomizationRecord_SetInstalledPart)(void*, DBPart::_DBPart, int*, int, char);
 	extern bool(__thiscall* IsStock)(void* _this);
 	extern int(__thiscall* StandardSelectablePart_GetCategoryHash)(int* _this);
@@ -85,9 +86,20 @@ namespace Game
 	extern bool(__thiscall* PVehicle_IsGlareOn)(int* PVehicle, int VehicleFXID);
 	extern int(__thiscall* eViewPlatInterface_Render)(void* _this, int a2, int a3, int a4, int a5, int a6, int a7);
 	extern void(__thiscall* eModel_ReplaceLightMaterial)(int, int, int);
-	extern int* (__cdecl* elGetLightMaterial)(int, int);
+	extern Material* (__cdecl* elGetLightMaterial)(int, int);
 	extern int* (__cdecl* GetTextureInfo)(int, int, int);
 	extern bool(__cdecl* IsPaused)();
 	extern int(__cdecl* AutosculptSelectablePart_ConvertSlotToRegion)(int);
 	extern bool(__cdecl* RenderFlare)(int, int, int, float, int, int, int, float, int, float);
+	extern FEObject*(__thiscall* FEPackage_FindObjectByHash)(void*, int);
+	extern void*(__stdcall* cFEng_FindPackage)(char*);
+	extern FEObject* (__thiscall* FEObject_Clone)(FEObject*, bool);
+	extern FEGroup* (__thiscall* FEGroup_Clone)(FEGroup*, bool);
+	extern void(__thiscall* FEPackage_BuildMouseObjectStateList)(FEPackage*);
+	extern void(__thiscall* FEPackage_ConnectObjectResources)(FEPackage*);
+	extern FEObjectMouseState* (__thiscall* FEPackage_GetMouseObjectState)(FEPackage*, FEObject*);
+	extern int* (__thiscall* FEMinList_AddNode)(FEMinList*, FEObject*);
+	extern bool (__thiscall* FEPackage__Startup)(void*, int);
+	extern void* (__thiscall* DynamicLightCtor)(void*);
+	extern double(__thiscall* CarRenderInfo_DrawAmbientShadow)(CarRenderInfo*, int, float*, float, int, int, int);
 }

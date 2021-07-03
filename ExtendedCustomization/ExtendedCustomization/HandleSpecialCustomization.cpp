@@ -1,10 +1,10 @@
 #include "Feature.h"
 
-void UninstallPart(int* rideInfo, int* FECustomizationRecord, DBPart::_DBPart part)
+void UninstallPart(RideInfo* rideInfo, int* FECustomizationRecord, DBPart::_DBPart part)
 {
 	if (FECustomizationRecord)
 	{
-		Game::UnInstallPart(FECustomizationRecord, *rideInfo, part);
+		Game::UnInstallPart(FECustomizationRecord, rideInfo->CarId, part);
 	}
 
 	if (rideInfo)
@@ -13,11 +13,11 @@ void UninstallPart(int* rideInfo, int* FECustomizationRecord, DBPart::_DBPart pa
 	}
 }
 
-void InstallPart(int* rideInfo, int* FECustomizationRecord, DBPart::_DBPart part, int* partPtr)
+void InstallPart(RideInfo* rideInfo, int* FECustomizationRecord, DBPart::_DBPart part, int* partPtr)
 {
 	if (FECustomizationRecord)
 	{
-		Game::FECustomizationRecord_SetInstalledPart(FECustomizationRecord, part, partPtr, *rideInfo, 0);
+		Game::FECustomizationRecord_SetInstalledPart(FECustomizationRecord, part, partPtr, rideInfo->CarId, 0);
 	}
 
 	if (rideInfo)
@@ -26,9 +26,9 @@ void InstallPart(int* rideInfo, int* FECustomizationRecord, DBPart::_DBPart part
 	}
 }
 
-void HandleRoof(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleRoof(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
-	auto carData = Config::Get(*rideInfo);
+	auto carData = Config::Get(rideInfo->CarId);
 	if (carData->SunRoof)
 	{
 		char* roofType = (char*)"%s_ROOF_SUN";
@@ -41,11 +41,11 @@ void HandleRoof(void* _this, int* rideInfo, int* FECustomizationRecord)
 			}
 		}
 
-		Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::Roof, 1, roofType, Game::GetCarTypeName(*rideInfo));
+		Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::Roof, 1, roofType, Game::GetCarTypeName(rideInfo->CarId));
 	}
 }
 
-void HandleBadging(void* _this, int* rideInfo, int* FECustomizationRecord, const char* position, DBPart::_DBPart partId)
+void HandleBadging(void* _this, RideInfo* rideInfo, int* FECustomizationRecord, const char* position, DBPart::_DBPart partId)
 {
 	int* body = Game::GetPart(rideInfo, DBPart::Body);
 	if (body && !Game::IsStock(body))
@@ -55,7 +55,7 @@ void HandleBadging(void* _this, int* rideInfo, int* FECustomizationRecord, const
 		return;
 	}
 
-	if (Config::GetPartState(*rideInfo, partId) == Config::EnabledState)
+	if (Config::GetPartState(rideInfo->CarId, partId) == Config::EnabledState)
 	{
 		int* badgingPart = (int*)Game::GetPart(rideInfo, partId);
 		if (!badgingPart)
@@ -64,7 +64,7 @@ void HandleBadging(void* _this, int* rideInfo, int* FECustomizationRecord, const
 
 			if (!bodyPart || Game::IsStock(bodyPart))
 			{
-				Game::InstallPart(_this, rideInfo, FECustomizationRecord, partId, 1, "%s_KIT00_%s_BUMPER_BADGING_SET", Game::GetCarTypeName(*rideInfo), position);
+				Game::InstallPart(_this, rideInfo, FECustomizationRecord, partId, 1, "%s_KIT00_%s_BUMPER_BADGING_SET", Game::GetCarTypeName(rideInfo->CarId), position);
 			}
 		}
 	}
@@ -74,32 +74,32 @@ void HandleBadging(void* _this, int* rideInfo, int* FECustomizationRecord, const
 		if (bumperPart)
 		{
 			int kit = Game::GetAppliedAttributeIParam1(bumperPart, Game::StringHash((char*)"KITNUMBER"), 0);
-			Game::InstallPart(_this, rideInfo, FECustomizationRecord, partId, 1, "%s_KIT%02d_%s_BUMPER_BADGING_SET", Game::GetCarTypeName(*rideInfo), kit, position);
+			Game::InstallPart(_this, rideInfo, FECustomizationRecord, partId, 1, "%s_KIT%02d_%s_BUMPER_BADGING_SET", Game::GetCarTypeName(rideInfo->CarId), kit, position);
 		}
 	}
 }
 
-void SetHeadlightsOff(void* _this, int* rideInfo, int* FECustomizationRecord)
+void SetHeadlightsOff(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
-	char* carName = Game::GetCarTypeName(*rideInfo);
+	char* carName = Game::GetCarTypeName(rideInfo->CarId);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::LeftHeadlight, 1, "%s_LEFT_HEADLIGHT_OFF", carName);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::RightHeadlight, 1, "%s_RIGHT_HEADLIGHT_OFF", carName);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::RightHeadlightGlass, 1, "%s_RIGHT_HEADLIGHT_GLASS_OFF", carName);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::LeftHeadlightGlass, 1, "%s_LEFT_HEADLIGHT_GLASS_OFF", carName);
 }
 
-void SetHeadlightsOn(void* _this, int* rideInfo, int* FECustomizationRecord)
+void SetHeadlightsOn(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
-	char* carName = Game::GetCarTypeName(*rideInfo);
+	char* carName = Game::GetCarTypeName(rideInfo->CarId);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::LeftHeadlight, 1, "%s_LEFT_HEADLIGHT", carName);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::RightHeadlight, 1, "%s_RIGHT_HEADLIGHT", carName);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::RightHeadlightGlass, 1, "%s_RIGHT_HEADLIGHT_GLASS", carName);
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::LeftHeadlightGlass, 1, "%s_LEFT_HEADLIGHT_GLASS", carName);
 }
 
-void SetHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord)
+void SetHeadlights(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
-	char* carName = Game::GetCarTypeName(*rideInfo);
+	char* carName = Game::GetCarTypeName(rideInfo->CarId);
 	int* leftHeadlight = Game::GetPart(rideInfo, DBPart::LeftHeadlight);
 
 	if (leftHeadlight)
@@ -118,13 +118,13 @@ void SetHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-int* GetPartByLodHash(DBPart::_DBPart part, int hash, int* rideInfo)
+int* GetPartByLodHash(DBPart::_DBPart part, int hash, RideInfo* rideInfo)
 {
 	int* partPtr = 0;
 
 	while (true)
 	{
-		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, *rideInfo, part, 0, partPtr, -1);
+		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, rideInfo->CarId, part, 0, partPtr, -1);
 		if (partPtr)
 		{
 			if (hash == Game::GetModelNameHash(partPtr, 0, 0, 0))
@@ -141,9 +141,9 @@ int* GetPartByLodHash(DBPart::_DBPart part, int hash, int* rideInfo)
 	return partPtr;
 }
 
-void HandleHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord, bool randomCar)
+void HandleHeadlights(void* _this, RideInfo* rideInfo, int* FECustomizationRecord, bool randomCar)
 {
-	auto carData = Config::Get(*rideInfo);
+	auto carData = Config::Get(rideInfo->CarId);
 
 	if (carData->PopupHeadlights && !randomCar)
 	{
@@ -151,7 +151,7 @@ void HandleHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord, bo
 		return;
 	}
 
-	if (Config::GetPartState(*rideInfo, DBPart::LeftHeadlight) == Config::EnabledState)
+	if (Config::GetPartState(rideInfo->CarId, DBPart::LeftHeadlight) == Config::EnabledState)
 	{
 		SetHeadlights(_this, rideInfo, FECustomizationRecord);
 		return;
@@ -163,7 +163,7 @@ void HandleHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord, bo
 		int kit = Game::GetAppliedAttributeIParam1(frontBumper, Game::StringHash((char*)"KITNUMBER"), 0);
 		if (kit)
 		{
-			char* carName = Game::GetCarTypeName(*rideInfo);
+			char* carName = Game::GetCarTypeName(rideInfo->CarId);
 			char buffer[100];
 			sprintf(buffer, "%s_KIT%02d_LEFT_HEADLIGHT_OFF_A", carName, kit);
 			if (Game::PartMeshExists(Game::StringHash(buffer)))
@@ -179,9 +179,9 @@ void HandleHeadlights(void* _this, int* rideInfo, int* FECustomizationRecord, bo
 	SetHeadlightsOn(_this, rideInfo, FECustomizationRecord);
 }
 
-void HandleBrakesStock(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleBrakesStock(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
-	char* carName = Game::GetCarTypeName(*rideInfo);
+	char* carName = Game::GetCarTypeName(rideInfo->CarId);
 	int* frontBrake = Game::GetPart(rideInfo, DBPart::FrontBrake);
 	int* frontRotor = Game::GetPart(rideInfo, DBPart::FrontRotor);
 
@@ -212,10 +212,10 @@ void HandleBrakesStock(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleBrakes(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleBrakes(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
 	HandleBrakesStock(_this, rideInfo, FECustomizationRecord);
-	char* carName = Game::GetCarTypeName(*rideInfo);
+	char* carName = Game::GetCarTypeName(rideInfo->CarId);
 	int* frontBrake = Game::GetPart(rideInfo, DBPart::FrontBrake);
 	if (frontBrake)
 	{
@@ -245,13 +245,13 @@ void HandleBrakes(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleSideMirrors(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleSideMirrors(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
 	int* leftMirror = Game::GetPart(rideInfo, DBPart::LeftMirror);
 	if (leftMirror)
 	{
 		int kit = Game::GetAppliedAttributeIParam1(leftMirror, Game::StringHash((char*)"KITNUMBER"), 0);
-		char* carName = Game::GetCarTypeName(*rideInfo);
+		char* carName = Game::GetCarTypeName(rideInfo->CarId);
 		if (kit)
 		{
 			Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::RightMirror, 1, "%s_KIT%02d_RIGHT_SIDE_MIRROR", carName, kit);
@@ -263,13 +263,13 @@ void HandleSideMirrors(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleBrakelights(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleBrakelights(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
 	int* leftBrakelight = Game::GetPart(rideInfo, DBPart::LeftBrakelight);
 	if (leftBrakelight)
 	{
 		int kit = Game::GetAppliedAttributeIParam1(leftBrakelight, Game::StringHash((char*)"KITNUMBER"), 0);
-		char* carName = Game::GetCarTypeName(*rideInfo);
+		char* carName = Game::GetCarTypeName(rideInfo->CarId);
 		if (kit)
 		{
 			Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::RightBrakelight, 1, "%s_KIT%02d_RIGHT_BRAKELIGHT", carName, kit);
@@ -285,7 +285,7 @@ void HandleBrakelights(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleExhaust(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleExhaust(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
 	//int* body = Game::GetPart(rideInfo, DBPart::Body);
 	//if (body)
@@ -326,7 +326,7 @@ void HandleExhaust(void* _this, int* rideInfo, int* FECustomizationRecord)
 		bool useExhaust = Game::GetAppliedAttributeIParam1(rearBumper, Game::StringHash("USE_EXHAUST_MARKER"), 0);
 		if (!useExhaust)
 		{
-			char* carName = Game::GetCarTypeName(*rideInfo);
+			char* carName = Game::GetCarTypeName(rideInfo->CarId);
 			Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::Exhaust, 1, "%s_KIT00_EXHAUST", carName);
 		}
 	}
@@ -339,17 +339,17 @@ void HandleExhaust(void* _this, int* rideInfo, int* FECustomizationRecord)
 	//Game::InstallExhaustHack(rideInfo, FECustomizationRecord);
 }
 
-void InstallDoorLine(void* _this, int* rideInfo, int* FECustomizationRecord, char* carName)
+void InstallDoorLine(void* _this, RideInfo* rideInfo, int* FECustomizationRecord, char* carName)
 {
 	Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::DoorLine, 1, "%s_KIT00_DOORLINE", carName);
 }
 
-void HandleBody(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleBody(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
 	int* body = Game::GetPart(rideInfo, DBPart::Body);
 	if (!body)
 	{
-		auto carType = *Game::CarTypeInfoArray + 0x34 * *rideInfo;
+		auto carType = *Game::CarTypeInfoArray + 0x34 * rideInfo->CarId;
 		char* str;
 		if (carType && *(carType + 0x25) == 2)
 		{
@@ -360,7 +360,7 @@ void HandleBody(void* _this, int* rideInfo, int* FECustomizationRecord)
 			str = (char*)"%s_BODY_KIT00";
 		}
 
-		char* carName = Game::GetCarTypeName(*rideInfo);
+		char* carName = Game::GetCarTypeName(rideInfo->CarId);
 		Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::Body, 1, str, carName);
 		InstallDoorLine(_this, rideInfo, FECustomizationRecord, carName);
 	}
@@ -368,7 +368,7 @@ void HandleBody(void* _this, int* rideInfo, int* FECustomizationRecord)
 	{
 		if (Game::IsStock(body))
 		{
-			char* carName = Game::GetCarTypeName(*rideInfo);
+			char* carName = Game::GetCarTypeName(rideInfo->CarId);
 			if (!Game::GetPart(rideInfo, DBPart::FrontBumper))
 			{
 				Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::FrontBumper, 1, "%s_KIT00_FRONT_BUMPER", carName);
@@ -393,9 +393,9 @@ void HandleBody(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleSkirt(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleSkirt(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
-	char* carName = Game::GetCarTypeName(*rideInfo);
+	char* carName = Game::GetCarTypeName(rideInfo->CarId);
 	std::string skirtCap = carName;
 	skirtCap.append("_KIT00_SKIRT_CAPPED_A");
 	if (Game::PartMeshExists(Game::StringHash(skirtCap.c_str())))
@@ -431,14 +431,14 @@ void HandleSkirt(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleDoors(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleDoors(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
-	if (Config::GetPartState(*rideInfo, DBPart::LeftDoor) == Config::EnabledState)
+	if (Config::GetPartState(rideInfo->CarId, DBPart::LeftDoor) == Config::EnabledState)
 	{
 		int* leftDoor = Game::GetPart(rideInfo, DBPart::LeftDoor);
 		if (leftDoor)
 		{
-			char* carName = Game::GetCarTypeName(*rideInfo);
+			char* carName = Game::GetCarTypeName(rideInfo->CarId);
 			int kit = Game::GetAppliedAttributeIParam1(leftDoor, Game::StringHash((char*)"KITNUMBER"), 0);
 			if (kit)
 			{
@@ -456,7 +456,7 @@ void HandleDoors(void* _this, int* rideInfo, int* FECustomizationRecord)
 		if (body)
 		{
 			int kit = Game::GetAppliedAttributeIParam1(body, Game::StringHash((char*)"KITNUMBER"), 0);
-			char* carName = Game::GetCarTypeName(*rideInfo);
+			char* carName = Game::GetCarTypeName(rideInfo->CarId);
 			if (kit)
 			{
 				Game::InstallPart(_this, rideInfo, FECustomizationRecord, DBPart::LeftDoor, 1, "%s_KITW%02d_DOOR_LEFT", carName, kit);
@@ -471,7 +471,7 @@ void HandleDoors(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleGenericVinyls(void* _this, int* rideInfo, int* FECustomizationRecord)
+void HandleGenericVinyls(void* _this, RideInfo* rideInfo, int* FECustomizationRecord)
 {
 	int* vinyl = Game::GetPart(rideInfo, DBPart::GenericVinyls);
 	if (vinyl && Game::IsStock(vinyl))
@@ -480,7 +480,7 @@ void HandleGenericVinyls(void* _this, int* rideInfo, int* FECustomizationRecord)
 	}
 }
 
-void HandleSpecialCustomization(void* _this, int* rideInfo, int* FECustomizationRecord, bool randomCar = false)
+void HandleSpecialCustomization(void* _this, RideInfo* rideInfo, int* FECustomizationRecord, bool randomCar = false)
 {
 	if (!rideInfo)
 	{
@@ -501,7 +501,7 @@ void HandleSpecialCustomization(void* _this, int* rideInfo, int* FECustomization
 	HandleGenericVinyls(_this, rideInfo, FECustomizationRecord);
 }
 
-void __fastcall HandleSpecialCustomizationCave(void* _this, int param, int* rideInfo, int* FECustomizationRecord)
+void __fastcall HandleSpecialCustomizationCave(void* _this, int param, RideInfo* rideInfo, int* FECustomizationRecord)
 {
 	HandleSpecialCustomization(_this, rideInfo, FECustomizationRecord);
 }

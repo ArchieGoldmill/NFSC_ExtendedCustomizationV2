@@ -81,6 +81,7 @@ namespace Config
 		bool FixFrontRearDecals;
 		bool AllVinylsMirrorable;
 		float DefaultFrontSteerAngle;
+		int MainGarage;
 
 		// Mods
 		bool TiresMod;

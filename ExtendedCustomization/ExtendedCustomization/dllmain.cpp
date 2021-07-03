@@ -27,6 +27,11 @@ void Init()
 	InitHeadlightsColor();
 	FixFrontRearDecals();
 	InitNeon();
+
+	auto text = (char*)"1.4\n\nExtended Customization 2.0.2\nby ARCHIE";
+	char** textPtr = (char**)(0x00857811);
+	*textPtr = text;
+	injector::MakeNOP(0x00591072, 7, true);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)

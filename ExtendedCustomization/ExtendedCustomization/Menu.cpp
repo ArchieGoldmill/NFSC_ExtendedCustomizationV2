@@ -52,6 +52,8 @@ void __stdcall AddMainMenuItems(int* _this)
 		}
 	}
 
+	AddMainMenuItem(_this, Game::StringHash("CUST_PARTS_WHEELS"), 7);
+
 	//for (int i = 0; i < 12; i++)
 	//{
 	//	if (Config::GetPartState(*rideInfo, MiscMenu[i]) == Config::EnabledState)
@@ -104,7 +106,7 @@ void __declspec(naked) OpenCustomMenuCave()
 	}
 }
 
-void AddMenuItem(char* _this, DBPart::_DBPart dbpart, bool isAutosculpt)
+void AddMenuItem(char* _this, DBPart::_DBPart dbpart, bool isAutosculpt, int hash = 0)
 {
 	int filter = 0;
 	if (dbpart == DBPart::FrontWheels)
@@ -132,8 +134,62 @@ void AddMenuItem(char* _this, DBPart::_DBPart dbpart, bool isAutosculpt)
 
 	if (state == Config::EnabledState)
 	{
-		Game::AddMenuOption(_this, Config::GetPartHeader(carId, dbpart, isAutosculpt), dbpart, isAutosculpt, filter);
+		if (!hash)
+		{
+			hash = Config::GetPartHeader(carId, dbpart, isAutosculpt);
+		}
+
+		Game::AddMenuOption(_this, hash, dbpart, isAutosculpt, filter);
 	}
+}
+
+struct RimBrand
+{
+	int hash;
+	int header;
+};
+bool operator==(const RimBrand& a, const RimBrand& b)
+{
+	return a.hash == b.hash;
+}
+
+std::vector<RimBrand> RimBrands;
+std::vector<RimBrand>& GetRimBrands()
+{
+	if (RimBrands.size() == 0)
+	{
+		RimBrand rimBrand;
+		rimBrand.hash = Game::StringHash("STOCK");
+		rimBrand.header = Game::StringHash("COMMON_STOCK");
+
+		RimBrands.push_back(rimBrand);
+
+		int* partPtr = 0;
+		while (true)
+		{
+			partPtr = Game::GetCarPart((int)Game::CarPartDB, 0, GetCarId(), DBPart::FrontWheels, 0, partPtr, -1);
+			if (partPtr)
+			{
+				if (Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"MORPHTARGET_NUM"), 0) == 0)
+				{
+					int brand = Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"BRAND_NAME"), 0);
+
+					rimBrand.hash = brand;
+					rimBrand.header = Game::StringHash1("_RIM_BRAND", brand);
+					if (brand && std::count(RimBrands.begin(), RimBrands.end(), rimBrand) == 0)
+					{
+						RimBrands.push_back(rimBrand);
+					}
+				}
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
+	return RimBrands;
 }
 
 void __stdcall AddMenuItems(char* _this)
@@ -163,7 +219,6 @@ void __stdcall AddMenuItems(char* _this)
 			AddMenuItem(_this, DBPart::Hood, isAutosculpt);
 			AddMenuItem(_this, DBPart::RoofScoop, isAutosculpt);
 			AddMenuItem(_this, DBPart::Spoiler, isAutosculpt);
-			AddMenuItem(_this, DBPart::FrontWheels, isAutosculpt);
 			AddMenuItem(_this, DBPart::Roof, isAutosculpt);
 			AddMenuItem(_this, DBPart::Interior, isAutosculpt);
 			AddMenuItem(_this, DBPart::FrontBadging, isAutosculpt);
@@ -190,6 +245,15 @@ void __stdcall AddMenuItems(char* _this)
 		}
 
 		if (lastMenu == 7)
+		{
+			auto brands = GetRimBrands();
+			for (auto brand : brands)
+			{
+				AddMenuItem(_this, DBPart::FrontWheels, isAutosculpt, brand.header);
+			}
+		}
+
+		if (lastMenu == 8)
 		{
 			for (int i = 0; i < 12; i++)
 			{
@@ -381,12 +445,27 @@ struct PartSlot
 	void* PartPtr;
 	int Name;
 	DBPart::_DBPart PartId;
-	int Region;
-	int Val;
 };
 
-void GetPartsList(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int brandName, int innerRadius, bool autosculpt)
+void __cdecl GetPartsListStandart(DBPart::_DBPart partId, PartSlot* ListHead, bool carbon, int brandName, int innerRadius)
 {
+	if (partId == DBPart::FrontWheels)
+	{
+		auto brands = GetRimBrands();
+		for (auto brand : brands)
+		{
+			if (brand.header == brandName)
+			{
+				brandName = brand.hash;
+				break;
+			}
+		}
+	}
+	else
+	{
+		brandName = 0;
+	}
+
 	int* partPtr = 0;
 
 	int i = 0;
@@ -395,7 +474,7 @@ void GetPartsList(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int b
 		partPtr = Game::GetCarPart((int)Game::CarPartDB, 0x009D1954, GetCarId(), partId, 0, partPtr, -1);
 		if (partPtr)
 		{
-			if (Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"STOCK"), 0) == 0)
+			if (!Game::IsStock(partPtr))
 			{
 				// Check if part has mesh
 				DBPart::_DBPart meshParts[] = { DBPart::Hood, DBPart::Body, DBPart::FrontWheels, DBPart::FrontBadging, DBPart::RearBadging,
@@ -420,19 +499,33 @@ void GetPartsList(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int b
 					continue;
 				}
 
-				if (partId == DBPart::FrontWheels && Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"INNER_RADIUS"), 0) != innerRadius)
+				if (partId == DBPart::FrontWheels)
 				{
-					continue;
+					if (Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"INNER_RADIUS"), 0) != innerRadius)
+					{
+						continue;
+					}
+
+					if (Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"BRAND_NAME"), 0) != brandName)
+					{
+						continue;
+					}
 				}
 
-				bool isAutosculpt = Game::GetAppliedAttributeIParam(partPtr, Game::StringHash((char*)"MORPHTARGET_NUM"), 0) != NULL;
-				if ((autosculpt && !isAutosculpt) || (!autosculpt && isAutosculpt))
+				if (Game::GetAppliedAttributeIParam(partPtr, Game::StringHash((char*)"MORPHTARGET_NUM"), 0) != 0)
 				{
 					continue;
 				}
 
 				bool isCarbon = Game::GetAppliedAttributeIParam1(partPtr, Game::StringHash((char*)"CARBONFIBRE"), 0) == 1;
 				if ((carbon && !isCarbon) || (!carbon && isCarbon))
+				{
+					continue;
+				}
+			}
+			else
+			{
+				if (brandName && Game::StringHash("STOCK") != brandName)
 				{
 					continue;
 				}
@@ -445,18 +538,13 @@ void GetPartsList(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int b
 			}
 
 			// game stuff to add part to list
-			auto vslot = (int*)Game::j_malloc_0(autosculpt ? 0x24 : 0x1C);
+			auto vslot = (int*)Game::j_malloc_0(0x1C);
 			*vslot = 0x009F9CF0;// vtable;
 			auto slot = (PartSlot*)(vslot + 1);
 			slot->Hash = 0x881F8EFA;
 			slot->PartId = partId;
 			slot->PartPtr = partPtr;
 			slot->Name = 0x009F9CD8;
-			if (autosculpt)
-			{
-				slot->Region = Game::AutosculptSelectablePart_ConvertSlotToRegion(partId);
-				slot->Val = 0;
-			}
 
 			PartSlot* ListEnd = ListHead->Next;
 			ListEnd->Prev = slot;
@@ -471,15 +559,216 @@ void GetPartsList(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int b
 	}
 }
 
-void __cdecl GetPartsListStandart(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int brandName, int innerRadius)
+void __declspec(naked) PartListBrandCave()
 {
-	GetPartsList(partId, ListHead, carbon, brandName, innerRadius, false);
+	static constexpr auto Exit = 0x0085FA1E;
+
+	__asm
+	{
+		mov ebp, [esp + 0x00000140];
+		push ecx;
+
+		cmp lastMenu, 7;
+		jne original;
+		mov ebx, esp;
+		add ebx, 0x140;
+		mov ebx, [ebx];
+		add ebx, 0x2C;
+		mov ebx, [ebx];
+		push ebx;
+
+		xor ebx, ebx;
+		jmp Exit;
+
+	original:
+		xor ebx, ebx;
+		push ebx;
+		jmp Exit;
+	}
 }
 
-//void __cdecl GetPartsListAutosculpt(DBPart::_DBPart partId, PartSlot* ListHead, char carbon, int brandName, int innerRadius)
-//{
-//	GetPartsList(partId, ListHead, carbon, brandName, innerRadius, true);
-//}
+struct TrackPositionMarker
+{
+	TrackPositionMarker* Prev;
+	TrackPositionMarker* Next;
+	int Hash;
+	int blank;
+	float X;
+	float Y;
+};
+
+void SetCoords(TrackPositionMarker* item, float x, float y)
+{
+	item->X = x;
+	item->Y = y;
+}
+
+void __stdcall SetMainGarageCoords(TrackPositionMarker* coords)
+{
+	if (coords->Hash == Game::StringHash("CarPosition_Main"))
+	{
+		switch (Config::GetGlobal()->MainGarage)
+		{
+		case 1: SetCoords(coords, 0, 0); break;
+		case 2: SetCoords(coords, 305.52, 0); break;
+		case 3: SetCoords(coords, 458.39, 362.79); break;
+		case 4: SetCoords(coords, 203.68, 0.02); break;
+		case 5: SetCoords(coords, -725.86, 0); break;
+		case 6: SetCoords(coords, -200.30, 0); break;
+		case 7: SetCoords(coords, -985, 0); break;
+		case 8: SetCoords(coords, -465.30, 0); break;
+		case 9: SetCoords(coords, 522.68, 0); break;
+		default: break;
+		}
+	}
+}
+
+void __declspec(naked) MainGarageCave()
+{
+	static constexpr auto Exit = 0x0083F272;
+
+	__asm
+	{
+		pushad;
+		push eax;
+		call SetMainGarageCoords;
+		popad;
+
+		mov ecx, [esi + 0x44];
+		add eax, 0x10;
+
+		jmp Exit;
+	}
+}
+
+bool __fastcall FEPackage_Startup(FEPackage* package, int param, int a2)
+{
+	bool result = Game::FEPackage__Startup(package, a2);
+
+	if (strcmp(package->Name, "FeCustomizeParts.fng") == 0)
+	{
+		auto option12 = (FEGroup*)Game::FEPackage_FindObjectByHash(package, Game::StringHash("OPTION_12"));
+
+		for (int i = 13; i <= 50; i++)
+		{
+			auto copy = Game::FEGroup_Clone(option12, false);
+			char buff[10];
+			sprintf(buff, "OPTION_%d", i);
+			copy->NameHash = Game::StringHash(buff);
+			copy->Prev = option12;
+			copy->Next = option12->Next;
+			option12->Next = copy;
+			package->Objects.NumElements++;
+		}
+
+		Game::FEPackage_BuildMouseObjectStateList(package);
+	}
+
+	return result;
+}
+
+void __declspec(naked) RimSizeCave1()
+{
+	static constexpr auto Exit = 0x0084020F;
+
+	__asm
+	{
+		mov ecx, [esi + 0x34];
+		mov eax, [ecx + 0x2C];
+		cmp lastMenu, 7;
+		jne RimSizeCave1_Exit;
+		mov eax, 0x0B47AB2E;
+
+	RimSizeCave1_Exit:
+		jmp Exit;
+	}
+}
+
+void __declspec(naked) RimSizeCave2()
+{
+	static constexpr auto Exit = 0x00840349;
+
+	__asm
+	{
+		mov eax, [esi + 0x34];
+		mov eax, [eax + 0x2C];
+		cmp lastMenu, 7;
+		jne RimSizeCave2_Exit;
+		mov eax, 0x0B47AB2E;
+
+	RimSizeCave2_Exit:
+		jmp Exit;
+	}
+}
+
+void __declspec(naked) RimSizeCave3()
+{
+	static constexpr auto Exit = 0x008469CC;
+
+	__asm
+	{
+		mov edx, [esi + 0x34];
+		mov eax, [ecx];
+		mov edi, [edx + 0x2C];
+		cmp lastMenu, 7;
+		jne RimSizeCave3_Exit;
+		mov edi, 0x0B47AB2E;
+
+	RimSizeCave3_Exit:
+		jmp Exit;
+	}
+}
+
+void __declspec(naked) RimSizeCave4()
+{
+	static constexpr auto Exit = 0x0085FCE1;
+
+	__asm
+	{
+		mov eax, [esp + 0x08];
+		cmp lastMenu, 7;
+		jne RimSizeCave4_Exit;
+		mov eax, 0x0B47AB2E;
+
+	RimSizeCave4_Exit:
+		cmp eax, 0xA234CD03;
+		jmp Exit;
+	}
+}
+
+void __declspec(naked) RimSizeCave5()
+{
+	static constexpr auto Exit = 0x008663F3;
+
+	__asm
+	{
+		cmp lastMenu, 7;
+		jne RimSizeCave5_Exit;
+		cmp eax, eax;
+		jmp Exit;
+
+	RimSizeCave5_Exit:
+		cmp [edi + 0x2C], 0x0B47AB2E;
+		jmp Exit;
+	}
+}
+
+void __declspec(naked) RimSizeCave6()
+{
+	static constexpr auto Exit = 0x0086653C;
+
+	__asm
+	{
+		mov eax, [esi + 0x34];
+		mov edi, [eax + 0x2C];
+		cmp lastMenu, 7;
+		jne RimSizeCave6_Exit;
+		mov edi, 0x0B47AB2E;
+
+	RimSizeCave6_Exit:
+		jmp Exit;
+	}
+}
 
 void InitMenu()
 {
@@ -496,5 +785,24 @@ void InitMenu()
 	injector::MakeCALL(0x0084EB1F, GetCameraScreenName, true);
 
 	injector::MakeCALL(0x0085FA37, GetPartsListStandart, true);
-	//injector::MakeCALL(0x0085FA30, GetPartsListAutosculpt, true);
+
+	injector::MakeJMP(0x0085FA13, PartListBrandCave, true);
+	injector::MakeJMP(0x00840209, RimSizeCave1, true);
+	injector::MakeJMP(0x00840343, RimSizeCave2, true);
+	injector::MakeJMP(0x008469C4, RimSizeCave3, true);
+	injector::MakeJMP(0x0085FCD8, RimSizeCave4, true);
+	injector::MakeJMP(0x008663EC, RimSizeCave5, true);
+	injector::MakeJMP(0x00866536, RimSizeCave6, true);
+
+	injector::MakeCALL(0x00600564, FEPackage_Startup, true);
+
+	// show CF toggle
+	//injector::MakeNOP(0x00866530, 6, true);
+	//injector::MakeNOP(0x00840207, 2, true);
+
+	int garage = Config::GetGlobal()->MainGarage;
+	if (garage > 0)
+	{
+		injector::MakeJMP(0x0083F26C, MainGarageCave, true);
+	}
 }
